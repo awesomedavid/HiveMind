@@ -1,2 +1,2 @@
 # HiveMind
-AP project
+AP Principles Project
