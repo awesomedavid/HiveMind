@@ -1,2 +1,0 @@
-# HiveMind
-AP Principles Project
