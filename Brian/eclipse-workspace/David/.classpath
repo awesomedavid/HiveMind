@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="project-hivemind/libs/natives"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="libs/lwjgl.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="project-hivemind2/libs/natives"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="libs/slick.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Project_Hivemind/libs/natives"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="libs/jinput.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Project_Hivemind/libs/natives"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="libs/jogg-0.0.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jorbis-0.0.15.jar"/>
+	<classpathentry kind="lib" path="/Brian/libs/ibxm.jar"/>
+	<classpathentry kind="lib" path="/Brian/libs/jinput.jar"/>
+	<classpathentry kind="lib" path="/Brian/libs/jnlp.jar"/>
+	<classpathentry kind="lib" path="/Brian/libs/jogg-0.0.7.jar"/>
+	<classpathentry kind="lib" path="/Brian/libs/jorbis-0.0.15.jar"/>
+	<classpathentry kind="lib" path="/Brian/libs/lwjgl_util_applet.jar"/>
+	<classpathentry kind="lib" path="/Brian/libs/lwjgl_util.jar"/>
+	<classpathentry kind="lib" path="/Brian/libs/lwjgl.jar"/>
+	<classpathentry kind="lib" path="/Brian/libs/natives-linux.jar"/>
+	<classpathentry kind="lib" path="/Brian/libs/natives-mac.jar"/>
+	<classpathentry kind="lib" path="/Brian/libs/natives-windows.jar"/>
+	<classpathentry kind="lib" path="/Brian/libs/slick-examples.jar"/>
+	<classpathentry kind="lib" path="/Brian/libs/slick.jar"/>
+	<classpathentry kind="lib" path="/Brian/libs/tinylinepp.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

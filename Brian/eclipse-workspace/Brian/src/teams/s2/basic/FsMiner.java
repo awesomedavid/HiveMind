@@ -4,10 +4,14 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
 import core.Utility;
+
 import objects.units.Miner;
+import teams.s2.basic.Extras.MiningAsteroid;
 
 public class FsMiner extends Miner {
 	Fs p;
+
+	MiningAsteroid a;
 
 	private boolean inMiningQueue;
 
@@ -19,26 +23,13 @@ public class FsMiner extends Miner {
 	}
 
 	/***************** Action Method ***************/
-	
+
 	public void action() {
-		
+
 		// This method is called every frame, BEFORE the order method is called
 		
-		if (isFull()) {
-			moveTo(getHomeBase());
-		} else {
-			if(Utility.distance(this, nearestOpenHighYieldAsteroid()) < 2 * Utility.distance(this, nearestOpenHighYieldAsteroid())) {
-				moveTo(nearestOpenHighYieldAsteroid());
-				startMine(nearestOpenHighYieldAsteroid());
-			}else {
-				moveTo(nearestOpenAsteroid());
-				startMine(nearestOpenAsteroid());
-			}
-		}
-		
-		//if(!isInMiningQueue())
-		
-		
+		mine();
+
 	}
 
 	/***************** Order Methods ***************/
@@ -79,6 +70,77 @@ public class FsMiner extends Miner {
 		// enable
 		// that player's drawings. Press 'q' to enable drawings for BLUE and 'e' for
 		// RED.
+	}
+
+	public void mine() {
+		if (isFull()) {
+			if (isInMiningQueue()) {
+
+				this.setInMiningQueue(false);
+				a.removeFromMiningQueue(this);
+				a.setOpen(true);
+			}
+
+			moveTo(getHomeBase());
+		} else {
+			if (!isInMiningQueue()) {
+				setInMiningQueue(true);
+				if (nearestOpenMiningAsteroid() != null) {
+					a = nearestOpenMiningAsteroid();
+					a.addToMiningQueue(this);
+				}
+				if (a.getCurMiners() == a.getMaxMiners()) {
+					a.setOpen(false);
+				}
+			}
+			if (isInMiningQueue()) {
+
+				if (a.hasMinerals()) {
+					moveTo(a.getAsteroid());
+					startMine(a.getAsteroid());
+				} else {
+					this.setInMiningQueue(false);
+					a.removeFromMiningQueue(this);
+					a.setOpen(true);
+				}
+			}
+		}
+	}
+
+	final public MiningAsteroid nearestOpenMiningAsteroid() {
+		if (asteroids.isEmpty())
+			return null;
+
+		float nearestDistance = Float.MAX_VALUE;
+		MiningAsteroid nearestTarget = null;
+
+		for (MiningAsteroid a : Fs.miningManager.getMiningAsteroids()) {
+			float d = Utility.distance(this, a);
+
+			if (d < nearestDistance && a.isOpen() && a.hasMinerals()) {
+				nearestDistance = d;
+				nearestTarget = a;
+			}
+		}
+		return nearestTarget;
+	}
+
+	final public MiningAsteroid nearestMiningAsteroid() {
+		if (asteroids.isEmpty())
+			return null;
+
+		float nearestDistance = Float.MAX_VALUE;
+		MiningAsteroid nearestTarget = null;
+
+		for (MiningAsteroid a : Fs.miningManager.getMiningAsteroids()) {
+			float d = Utility.distance(this, a);
+
+			if (d < nearestDistance && a.hasMinerals()) {
+				nearestDistance = d;
+				nearestTarget = a;
+			}
+		}
+		return nearestTarget;
 	}
 
 	public boolean isInMiningQueue() {

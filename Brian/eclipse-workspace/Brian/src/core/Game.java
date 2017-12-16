@@ -49,8 +49,8 @@ public class Game extends BasicGameState
 		playerOne = new Fs(Values.BLUE_ID, this);
 		playerOne.setDifficultyRating(1);			
 		
-		playerTwo = new Random(Values.RED_ID, this);
-		playerOne.setDifficultyRating(1);
+		playerTwo = new Rush(Values.RED_ID, this);
+		playerTwo.setDifficultyRating(1);
 	}
 	
 	private static Camera c;	

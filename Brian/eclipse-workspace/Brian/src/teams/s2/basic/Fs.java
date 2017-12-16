@@ -31,10 +31,12 @@ import objects.upgrades.SupportEnergy;
 import objects.upgrades.SupportFix;
 import scenario.Scenario;
 import teams.s2.basic.Extras.MiningAsteroid;
+import teams.s2.basic.Extras.MiningManager;
 import weapons.RaiderAttack;
 
 public class Fs extends Player {
-	private MiningAsteroid[] miningAsteroids;
+
+	static MiningManager miningManager;
 
 	/**************** Constructor ****************/
 
@@ -43,24 +45,28 @@ public class Fs extends Player {
 		setName("MyTeamName");
 		loadImageSet("classic");
 
-		//miningAsteroids = new MiningAsteroid[Scenario.getAsteroids().size()];
-//
-//		for (int i = 0; i < Game.getAsteroids().size(); i++) {
-//			System.out.println("bio");
-//			miningAsteroids[i] = new MiningAsteroid(Game.getAsteroids().get(i).getX(), Game.getAsteroids().get(i).getY(), Game.getAsteroids().get(i).getXSpeed(), Game.getAsteroids().get(i).getYSpeed(), Game.getAsteroids().get(i).getMaxMiners());
-//		}
+		miningManager = new MiningManager();
+
 	}
 
 	/**************** Action Method ****************/
 
 	public void action() throws SlickException {
+
+		if (Game.getTime() == 1) {
+			initializeExtras();
+		}
+
 		// You can research new technologies. The classes are under
 		// "Objects/Units/Upgrades"
 		beginResearch(RaiderPierce.class);
 
+		// miningAsteroids.add(new MiningAsteroid(Game.getAsteroids().get(2)));
+
 		// To build a unit, use the relevant addUnitToQueue method.
 		// It will only be added to your build queue if you can afford it.
-		if (countMyMiners() < 10) {
+
+		if (countMyMiners() < 100) {
 			addMinerToQueue();
 		} else {
 			addRaiderToQueue();
@@ -74,7 +80,6 @@ public class Fs extends Player {
 		setMessageOne("Raiders: " + countMyRaiders());
 
 		// For more example code, check out the other "starter" teams
-
 	}
 
 	/**************** Draw Method ****************/
@@ -96,6 +101,16 @@ public class Fs extends Player {
 	 * 
 	 * \
 	 ***********************************************/
+
+	public void initializeExtras() {
+		try {
+			int length = Game.getAsteroids().size();
+			for (int i = 0; i < length; i++) {
+				miningManager.getMiningAsteroids().add(new MiningAsteroid(Game.getAsteroids().get(i)));
+			}
+		} catch (Exception e) {
+		}
+	}
 
 	public Raider buildRaider() throws SlickException {
 		return new FsRaider(this);
