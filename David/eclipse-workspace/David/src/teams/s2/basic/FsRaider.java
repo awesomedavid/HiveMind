@@ -3,7 +3,12 @@ package teams.s2.basic;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
+import objects.units.Assault;
+import objects.units.BaseShip;
+import objects.units.Miner;
 import objects.units.Raider;
+import objects.units.Specialist;
+import objects.units.Support;
 import objects.units.Unit;
 
 public class FsRaider extends Raider {
@@ -18,15 +23,44 @@ public class FsRaider extends Raider {
 	
 	public void action() {
 		
-		// This method is called every frame, BEFORE the order method is called
+		Unit e = nearestEnemy();
+		Unit a = nearestAlly();
+		if(e instanceof BaseShip) {
+			moveTo(nearestAlly(Miner.class));
+			shoot(e);
+		}
+		if(e instanceof Assault) {
+			
+			moveTo(nearestAlly(Assault.class));
+			moveTo(nearestAlly(Specialist.class));
+			moveTo(getHomeBase());
+			shoot(e);
+		}
+		if(e instanceof Raider) {
+			moveTo(e);
+			shoot(e);
+		}
+		if(e instanceof Specialist) {
+			moveTo(e);
+			shoot(e);
+		}
+		if(e instanceof Miner){
+			moveTo(e);
+			shoot(e);
+		}
+		if(e instanceof Support) {
+			moveTo(e);
+			shoot(e);
+		}
+		if(getOwner().countEnemyUnits()<=0 || e == null) {
+			moveTo(getEnemyBase());
+			shoot(getEnemyBase());
+		}
 		
-		Unit a = nearestEnemy();
-
-		moveTo(a);
-		shoot(a);
+		
 
 	}
-	
+
 	/***************** Order Methods ***************/
 
 	protected void attack() {

@@ -7,6 +7,8 @@ import core.Utility;
 import objects.units.Miner;
 
 public class FsMiner extends Miner {
+	float timeHigh = 0;
+	float timeNorm = 0;
 	Fs p;
 
 	private boolean inMiningQueue;
@@ -27,18 +29,31 @@ public class FsMiner extends Miner {
 		if (isFull()) {
 			moveTo(getHomeBase());
 		} else {
-			if(Utility.distance(this, nearestOpenHighYieldAsteroid()) < 2 * Utility.distance(this, nearestOpenHighYieldAsteroid())) {
+			checkTimes();
+			if(nearestOpenHighYieldAsteroid() != null)
+			{
+			if(timeHigh < timeNorm)
+			{
 				moveTo(nearestOpenHighYieldAsteroid());
-				startMine(nearestOpenHighYieldAsteroid());
+				startMine(nearestOpenHighYieldAsteroid());			
 			}else {
 				moveTo(nearestOpenAsteroid());
-				startMine(nearestOpenAsteroid());
+				startMine(nearestOpenAsteroid());		
+			}
+			}else {
+				moveTo(nearestOpenAsteroid());
+				startMine(nearestOpenAsteroid());		
+				
 			}
 		}
 		
 		//if(!isInMiningQueue())
 		
 		
+	}
+	public void checkTimes() {
+		timeNorm = ((Utility.distance(this, nearestOpenAsteroid())/this.getMaxSpeed())*2)+((this.getCapacity()+this.getLoad())/this.getRate());
+		timeHigh = ((Utility.distance(this, nearestOpenHighYieldAsteroid())/this.getMaxSpeed())*2)+((this.getCapacity()+this.getLoad())/(this.getRate()*2));
 	}
 
 	/***************** Order Methods ***************/

@@ -21,6 +21,7 @@ import objects.upgrades.AssaultExplosive;
 import objects.upgrades.AssaultShield;
 import objects.upgrades.MinerHull;
 import objects.upgrades.MinerLaser;
+import objects.upgrades.MinerMine;
 import objects.upgrades.RaiderEngine;
 import objects.upgrades.RaiderMissile;
 import objects.upgrades.RaiderPierce;
@@ -43,37 +44,38 @@ public class Fs extends Player {
 		setName("MyTeamName");
 		loadImageSet("classic");
 
-		//miningAsteroids = new MiningAsteroid[Scenario.getAsteroids().size()];
-//
-//		for (int i = 0; i < Game.getAsteroids().size(); i++) {
-//			System.out.println("bio");
-//			miningAsteroids[i] = new MiningAsteroid(Game.getAsteroids().get(i).getX(), Game.getAsteroids().get(i).getY(), Game.getAsteroids().get(i).getXSpeed(), Game.getAsteroids().get(i).getYSpeed(), Game.getAsteroids().get(i).getMaxMiners());
-//		}
 	}
 
 	/**************** Action Method ****************/
 
 	public void action() throws SlickException {
-		// You can research new technologies. The classes are under
-		// "Objects/Units/Upgrades"
+		beginResearch(AssaultAegis.class);
+		beginResearch(SpecialistReactor.class);
+		beginResearch(AssaultShield.class);
+		beginResearch(MinerMine.class);
 		beginResearch(RaiderPierce.class);
-
-		// To build a unit, use the relevant addUnitToQueue method.
-		// It will only be added to your build queue if you can afford it.
-		if (countMyMiners() < 10) {
+		if (countMyMiners() < 2) {
 			addMinerToQueue();
-		} else {
+		}
+		if (countEnemyMiners() > countMyMiners()) {
+			addMinerToQueue();
+		}
+		if(countEnemyRaiders() > countMyAssaults()*3) {
+			addAssaultToQueue();
+		}
+		if(countEnemySpecialists()> countMyRaiders()/3) {
 			addRaiderToQueue();
 		}
+		if(countEnemyAssaults()> countMySpecialists()) {
+			addSpecialistToQueue();
+		}
+		if(countEnemyUnits()<=0) {
+			addAssaultToQueue();
+		}
+		
+		
 
-		// Unit a = (getMyUnits(FsRaider.class).get(0));
-
-		// a.setOrder(Order.ATTACK);
-
-		// You can set up to three messages
-		setMessageOne("Raiders: " + countMyRaiders());
-
-		// For more example code, check out the other "starter" teams
+		
 
 	}
 

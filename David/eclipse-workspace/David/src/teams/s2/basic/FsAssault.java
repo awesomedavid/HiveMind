@@ -4,6 +4,8 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
 import objects.units.Assault;
+import objects.units.BaseShip;
+import objects.units.Miner;
 import objects.units.Unit;
 
 public class FsAssault extends Assault {
@@ -19,13 +21,14 @@ public class FsAssault extends Assault {
 	/***************** Action Method ***************/
 	
 	public void action() {
-		
-		// This method is called every frame, BEFORE the order method is called
-		
-		Unit a = nearestEnemy();
-
-		moveTo(a);
-		shoot(a);
+		Unit e = nearestEnemy();
+		if(e instanceof BaseShip) {
+			moveTo(nearestAlly(Miner.class));
+			shoot(e);
+		}else {
+		moveTo(e);
+		shoot(e);
+		}
 
 	}
 	
