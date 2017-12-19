@@ -1,24 +1,21 @@
-package teams.s2.basic;
+package teams.testCopy;
 
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
 import core.Utility;
-import objects.base.Player;
-import objects.units.Assault;
-import objects.units.Raider;
-import objects.units.Unit;
 
-public class FsRaider extends Raider {
-	Fs p;
+import objects.units.Miner;
+import teams.s2.basic.Extras.MiningAsteroid;
 
-	private boolean leader;
+public class Fs2Miner extends Miner {
+	Fs2 p;
 
-	public FsRaider(Fs p) throws SlickException {
+	/***************** Constructor ***************/
+
+	public Fs2Miner(Fs2 p) throws SlickException {
 		super(p);
 		this.p = p;
-
-		setLeader(false);
 	}
 
 	/***************** Action Method ***************/
@@ -26,6 +23,8 @@ public class FsRaider extends Raider {
 	public void action() {
 
 		// This method is called every frame, BEFORE the order method is called
+		
+		mine();
 
 	}
 
@@ -33,15 +32,10 @@ public class FsRaider extends Raider {
 
 	protected void attack() {
 		// This method is called every frame while the unit's order is set to ATTACK
-
-		moveTo(nearestEnemy());
-		shoot(nearestEnemy());
-
 	}
 
 	protected void defend() {
 		// This method is called every frame while the unit's order is set to DEFEND
-		moveTo(getHomeBase());
 	}
 
 	protected void guard() {
@@ -74,11 +68,12 @@ public class FsRaider extends Raider {
 		// RED.
 	}
 
-	public boolean isLeader() {
-		return leader;
-	}
-
-	public void setLeader(boolean leader) {
-		this.leader = leader;
+	public void mine() {
+		if (isFull()) {
+			moveTo(getHomeBase());
+		} else {
+			moveTo(nearestOpenAsteroid());
+			startMine(nearestOpenAsteroid());
+		}
 	}
 }

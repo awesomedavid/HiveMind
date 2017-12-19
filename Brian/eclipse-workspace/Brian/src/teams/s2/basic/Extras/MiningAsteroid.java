@@ -4,6 +4,7 @@ import org.newdawn.slick.SlickException;
 
 import objects.ambient.Ambient;
 import objects.ambient.Asteroid;
+import objects.base.Player;
 import objects.units.Miner;
 
 public class MiningAsteroid extends Ambient {

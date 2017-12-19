@@ -31,6 +31,7 @@ import teams.starter.random.Random;
 import teams.starter.heavy.Heavy;
 import teams.starter.rush.Rush;
 import teams.starter.swarm.Swarm;
+import teams.testCopy.Fs2;
 import ui.Audio;
 import ui.Camera;
 import ui.Display;
@@ -49,7 +50,7 @@ public class Game extends BasicGameState
 		playerOne = new Fs(Values.BLUE_ID, this);
 		playerOne.setDifficultyRating(1);			
 		
-		playerTwo = new Rush(Values.RED_ID, this);
+		playerTwo = new Heavy(Values.RED_ID, this);
 		playerTwo.setDifficultyRating(1);
 	}
 	
