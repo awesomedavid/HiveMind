@@ -105,6 +105,35 @@ public class Fs extends Player {
 
 		// For more example code, check out the other "starter" teams
 	}
+	
+	
+	public void addRaider()
+	{
+		try {
+			addRaiderToQueue();
+		} catch (SlickException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public void addAssault()
+	{
+		try {
+			addAssaultToQueue();
+		} catch (SlickException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public void addSpecialist()
+	{
+		try {
+			addSpecialistToQueue();
+		} catch (SlickException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	/**************** Draw Method ****************/
 

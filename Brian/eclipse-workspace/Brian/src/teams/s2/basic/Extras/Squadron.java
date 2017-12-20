@@ -33,21 +33,14 @@ public class Squadron {
 	}
 
 	public void create() {
-		// p.addGroup(SQUAD_RAIDER_NUM, SQUAD_ASSAULT_NUM, SQUAD_SPECIALIST_NUM);
-		try {
-			for (int i = 0; i < SQUAD_RAIDER_NUM; i++) {
-				units.add(p.buildRaider());
-			}
-			for (int i = 0; i < SQUAD_ASSAULT_NUM; i++) {
-				units.add(p.buildAssault());
-			}
-			for (int i = 0; i < SQUAD_SPECIALIST_NUM; i++) {
-				units.add(p.buildSpecialist());
-			}
-
-		} catch (SlickException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		for (int i = 0; i < SQUAD_RAIDER_NUM; i++) {
+			p.addRaider();
+		}
+		for (int i = 0; i < SQUAD_ASSAULT_NUM; i++) {
+			p.addAssault();
+		}
+		for (int i = 0; i < SQUAD_SPECIALIST_NUM; i++) {
+			p.addSpecialist();
 		}
 	}
 
