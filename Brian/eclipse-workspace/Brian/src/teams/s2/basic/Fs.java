@@ -8,6 +8,7 @@ import org.newdawn.slick.SlickException;
 import core.Game;
 import core.Utility;
 import objects.ambient.Asteroid;
+import objects.ambient.HighYieldAsteroid;
 import objects.base.Player;
 import objects.units.Assault;
 import objects.units.Miner;
@@ -30,6 +31,7 @@ import objects.upgrades.SpecialistRift;
 import objects.upgrades.SupportEnergy;
 import objects.upgrades.SupportFix;
 import scenario.Scenario;
+import teams.s2.basic.Extras.HighYieldMiningAsteroid;
 import teams.s2.basic.Extras.MiningAsteroid;
 import teams.s2.basic.Extras.MiningManager;
 import teams.s2.basic.Extras.Squadron;
@@ -38,22 +40,21 @@ import weapons.RaiderAttack;
 public class Fs extends Player {
 
 	static MiningManager miningManager;
-	
+
 	private ArrayList<Squadron> squadrons;
 
 	/**************** Constructor ****************/
 
 	public Fs(int team, Game g) throws SlickException {
 		super(team, g);
-		//.g = g;
-		//this.team = team;
+		// .g = g;
+		// this.team = team;
 		setName("MyTeamName");
 		loadImageSet("classic");
 
 		miningManager = new MiningManager();
-		
+
 		squadrons = new ArrayList<Squadron>();
-		Squadron q = new Squadron(1,1,1);
 	}
 
 	/**************** Action Method ****************/
@@ -76,22 +77,24 @@ public class Fs extends Player {
 		// To build a unit, use the relevant addUnitToQueue method.
 		// It will only be added to your build queue if you can afford it.
 
-		if (Game.getTime() > 100) {
-			if (countMyMiners() < 10) {
-				addMinerToQueue();
-			} else if(getMinerals() >= 37){
-				//squadrons.add(new Squadron(team, g));
-			}
-		} else {
-			if (countMyMiners() < 10) {
-				addMinerToQueue();
-			} else {
-				addRaiderToQueue();
-			}
-		}
-		for (Unit a : getMyUnits(Raider.class)) {
-			a.setOrder(Order.ATTACK);
-		}
+//		if (Game.getTime() > 10) {
+//			if (countMyMiners() < 4) {
+//				addMinerToQueue();
+//			} else if (getMinerals() >= 12) {
+//				squadrons.add(new Squadron(this));
+//			}
+//		} else {
+//			if (countMyMiners() < 3) {
+//				addMinerToQueue();
+//			} else {
+//				addRaiderToQueue();
+//			}
+//		}
+//		for (Unit a : getMyUnits(Raider.class)) {
+//			a.setOrder(Order.ATTACK);
+//		}
+		
+		addMinerToQueue();
 
 		// Unit a = (getMyUnits(FsRaider.class).get(0));
 
@@ -101,6 +104,35 @@ public class Fs extends Player {
 		setMessageOne("Raiders: " + countMyRaiders());
 
 		// For more example code, check out the other "starter" teams
+	}
+	
+	
+	public void addRaider()
+	{
+		try {
+			addRaiderToQueue();
+		} catch (SlickException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public void addAssault()
+	{
+		try {
+			addAssaultToQueue();
+		} catch (SlickException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	public void addSpecialist()
+	{
+		try {
+			addSpecialistToQueue();
+		} catch (SlickException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**************** Draw Method ****************/
@@ -127,10 +159,15 @@ public class Fs extends Player {
 		try {
 			int length = Game.getAsteroids().size();
 			for (int i = 0; i < length; i++) {
-				miningManager.getMiningAsteroids().add(new MiningAsteroid(Game.getAsteroids().get(i)));
-				
+
+				if (Game.getAsteroids().get(i) instanceof HighYieldAsteroid) {
+
+					miningManager.getHighYieldMiningAsteroids()
+							.add(new HighYieldMiningAsteroid((HighYieldAsteroid) Game.getAsteroids().get(i)));
+				} else {
+					miningManager.getMiningAsteroids().add(new MiningAsteroid(Game.getAsteroids().get(i)));
+				}
 			}
-			squadrons.add(new Squadron(1,1,1));
 		} catch (Exception e) {
 		}
 	}
@@ -160,11 +197,11 @@ public class Fs extends Player {
 			for (int a = 0; a < raiderNum; a++) {
 				addRaiderToQueue();
 			}
-			
+
 			for (int a = 0; a < assaultNum; a++) {
 				addAssaultToQueue();
 			}
-			
+
 			for (int a = 0; a < specialistNum; a++) {
 				addSpecialistToQueue();
 			}
