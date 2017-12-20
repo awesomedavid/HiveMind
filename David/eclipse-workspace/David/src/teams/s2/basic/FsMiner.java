@@ -5,6 +5,7 @@ import org.newdawn.slick.SlickException;
 
 import core.Utility;
 import objects.units.Miner;
+import objects.units.Unit;
 
 public class FsMiner extends Miner {
 	float timeHigh = 0;
@@ -25,7 +26,11 @@ public class FsMiner extends Miner {
 	public void action() {
 		
 		// This method is called every frame, BEFORE the order method is called
-		
+		Unit e = nearestEnemy();
+		if(getDistance(e)<1055) {
+			stopMine();
+			moveTo(getHomeBase());
+		}else {
 		if (isFull()) {
 			moveTo(getHomeBase());
 		} else {
@@ -46,7 +51,7 @@ public class FsMiner extends Miner {
 				
 			}
 		}
-		
+		}
 		//if(!isInMiningQueue())
 		
 		
@@ -79,7 +84,7 @@ public class FsMiner extends Miner {
 	}
 
 	protected void special() {
-		// This method is called every frame while the unit's order is set to SPECIAL
+	
 	}
 
 	protected void run() {

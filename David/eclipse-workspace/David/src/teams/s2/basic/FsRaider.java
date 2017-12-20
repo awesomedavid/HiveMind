@@ -3,6 +3,7 @@ package teams.s2.basic;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
+import core.Utility;
 import objects.units.Assault;
 import objects.units.BaseShip;
 import objects.units.Miner;
@@ -10,6 +11,7 @@ import objects.units.Raider;
 import objects.units.Specialist;
 import objects.units.Support;
 import objects.units.Unit;
+import objects.units.Unit.Order;
 
 public class FsRaider extends Raider {
 	Fs p;
@@ -24,18 +26,36 @@ public class FsRaider extends Raider {
 	public void action() {
 		
 		Unit e = nearestEnemy();
-		Unit a = nearestAlly();
+		if(e instanceof BaseShip && Utility.distance(getHomeBase(),getEnemyBase())<500) {
+			moveTo(e);
+			shoot(e);
+		}
 		if(e instanceof BaseShip) {
 			moveTo(nearestAlly(Miner.class));
 			shoot(e);
 		}
+		
+		
 		if(e instanceof Assault) {
-			
+			if(nearestAlly(Assault.class)!=null)
 			moveTo(nearestAlly(Assault.class));
+			else if(nearestAlly(Specialist.class)!=null)
 			moveTo(nearestAlly(Specialist.class));
+			else
 			moveTo(getHomeBase());
 			shoot(e);
 		}
+		if(Utility.distance(e, nearestEnemy(Assault.class))<390) {
+			if(nearestAlly(Specialist.class)!=null) {
+			moveTo(nearestAlly(Specialist.class));
+			shoot(e);
+			}else {
+				turnTo(nearestEnemy(Assault.class));
+				moveTo(getHomeBase());
+				shoot(e);
+			}
+		}else {
+			
 		if(e instanceof Raider) {
 			moveTo(e);
 			shoot(e);
@@ -56,7 +76,7 @@ public class FsRaider extends Raider {
 			moveTo(getEnemyBase());
 			shoot(getEnemyBase());
 		}
-		
+		}
 		
 
 	}
@@ -84,7 +104,7 @@ public class FsRaider extends Raider {
 	}
 
 	protected void special() {
-		// This method is called every frame while the unit's order is set to SPECIAL
+
 	}
 
 	protected void run() {
@@ -92,10 +112,12 @@ public class FsRaider extends Raider {
 	}
 
 	/***************** DRAW Methods ***************/
-	
+
 	public void draw(Graphics g) {
 
-		// This method allows you to draw things on the screen.  It's only visible if you enable  
-		// that player's drawings.  Press 'q' to enable drawings for BLUE and 'e' for RED.
+		// This method allows you to draw things on the screen. It's only visible if you
+		// enable
+		// that player's drawings. Press 'q' to enable drawings for BLUE and 'e' for
+		// RED.
 	}
 }

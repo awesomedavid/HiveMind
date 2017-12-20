@@ -3,7 +3,13 @@ package teams.s2.basic;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
+import core.Utility;
+import objects.units.Assault;
+import objects.units.BaseShip;
+import objects.units.Miner;
+import objects.units.Raider;
 import objects.units.Specialist;
+import objects.units.Support;
 import objects.units.Unit;
 
 public class FsSpecialist extends Specialist {
@@ -20,10 +26,60 @@ public class FsSpecialist extends Specialist {
 		
 		// This method is called every frame, BEFORE the order method is called
 		
-		Unit a = nearestEnemy();
-
-		moveTo(a);
-		shoot(a);
+		Unit e = nearestEnemy();
+		if(e instanceof BaseShip && Utility.distance(getHomeBase(),getEnemyBase())<500) {
+			moveTo(e);
+			shoot(e);
+		}
+		if(e instanceof BaseShip) {
+			moveTo(nearestAlly(Miner.class));
+			shoot(e);
+		}
+		if(e instanceof Assault) {
+			if(getDistance(e)<1000) {
+				turnTo(e);
+				move(180);
+			}
+			moveTo(e);			
+			shoot(e);
+		}
+		if(e instanceof Raider) {
+			if(nearestAlly(Assault.class)!=null)
+			moveTo(nearestAlly(Assault.class));
+			else if(nearestAlly(Raider.class)!=null)
+			moveTo(nearestAlly(Raider.class));
+			else
+			moveTo(getHomeBase());
+			shoot(e);
+		}
+		if(e instanceof Specialist) {
+			if(getDistance(e)<1000) {
+				turnTo(e);
+				move(180);
+			}
+			moveTo(e);			
+			shoot(e);
+		}
+		if(e instanceof Miner){
+			if(getDistance(e)<1000) {
+				turnTo(e);
+				move(180);
+			}
+			moveTo(e);			
+			shoot(e);
+		}
+		if(e instanceof Support) {
+			if(getDistance(e)<1000) {
+				turnTo(e);
+				move(180);
+			}
+			moveTo(e);			
+			shoot(e);
+		}
+		if(getOwner().countEnemyUnits()<=0 || e == null) {
+			moveTo(getEnemyBase());
+			shoot(getEnemyBase());
+		}
 
 	}
 	
@@ -50,7 +106,7 @@ public class FsSpecialist extends Specialist {
 	}
 
 	protected void special() {
-		// This method is called every frame while the unit's order is set to SPECIAL
+		
 	}
 
 	protected void run() {

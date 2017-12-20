@@ -69,9 +69,16 @@ public class Fs extends Player {
 		if(countEnemyAssaults()> countMySpecialists()) {
 			addSpecialistToQueue();
 		}
-		if(countEnemyUnits()<=0) {
+		if(getMinerals()>= 70) {
+			
+		}
+		//altRight
+		if(Utility.distance(getMyBase(),getEnemyBase())<1000) {
 			addAssaultToQueue();
 		}
+		
+		
+		
 		
 		
 
