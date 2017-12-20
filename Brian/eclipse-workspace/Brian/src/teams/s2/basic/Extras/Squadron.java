@@ -11,26 +11,44 @@ import objects.units.Raider;
 import objects.units.Specialist;
 import objects.units.Unit;
 import teams.s2.basic.Fs;
+import teams.s2.basic.FsRaider;
 import teams.starter.swarm.Swarm;
 
-public class Squadron{
+public class Squadron {
 	private final static int SQUAD_RAIDER_NUM = 4;
 	private final static int SQUAD_ASSAULT_NUM = 2;
 	private final static int SQUAD_SPECIALIST_NUM = 1;
-	
-	private Fs p;
-	
+
+	Fs p;
 
 	private ArrayList<Unit> units;
 
-	public Squadron(Fs fs) throws SlickException {		
-			
-		p = fs;
+	public Squadron(Fs p) throws SlickException {
+
+		this.p = p;
+		units = new ArrayList<Unit>();
 		create();
+		
+		
 	}
-	
+
 	public void create() {
-		p.addGroup(SQUAD_RAIDER_NUM, SQUAD_ASSAULT_NUM, SQUAD_SPECIALIST_NUM);
+		// p.addGroup(SQUAD_RAIDER_NUM, SQUAD_ASSAULT_NUM, SQUAD_SPECIALIST_NUM);
+		try {
+			for (int i = 0; i < SQUAD_RAIDER_NUM; i++) {
+				units.add(p.buildRaider());
+			}
+			for (int i = 0; i < SQUAD_ASSAULT_NUM; i++) {
+				units.add(p.buildAssault());
+			}
+			for (int i = 0; i < SQUAD_SPECIALIST_NUM; i++) {
+				units.add(p.buildSpecialist());
+			}
+
+		} catch (SlickException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public ArrayList<Unit> getUnits() {

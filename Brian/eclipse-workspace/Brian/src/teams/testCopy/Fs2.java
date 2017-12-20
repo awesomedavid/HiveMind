@@ -68,11 +68,12 @@ public class Fs2 extends Player {
 		// To build a unit, use the relevant addUnitToQueue method.
 		// It will only be added to your build queue if you can afford it.
 
-		if (countMyMiners() < 4) {
-			addMinerToQueue();
-		} else {
-			addRaiderToQueue();
-		}
+//		if (countMyMiners() < 4) {
+//			addMinerToQueue();
+//		} else {
+//			addRaiderToQueue();
+//		}
+		addMinerToQueue();
 
 		// Unit a = (getMyUnits(FsRaider.class).get(0));
 

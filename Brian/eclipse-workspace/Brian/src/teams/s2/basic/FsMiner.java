@@ -86,13 +86,14 @@ public class FsMiner extends Miner {
 			}
 
 			moveTo(getHomeBase());
-		} else {
+		} else if (bestAsteroid() != null) {
+
 			if (!isInMiningQueue()) {
 				setInMiningQueue(true);
-				if (nearestOpenMiningAsteroid() != null) {
-					a = bestAsteroid();
-					a.addToMiningQueue(this);
-				}
+
+				a = bestAsteroid();
+				a.addToMiningQueue(this);
+
 				if (a.getCurMiners() == a.getMaxMiners()) {
 					a.setOpen(false);
 				}
@@ -108,6 +109,10 @@ public class FsMiner extends Miner {
 					a.setOpen(true);
 				}
 			}
+
+		} else {
+			moveTo(nearestOpenAsteroid());
+			startMine(nearestOpenAsteroid());
 		}
 	}
 
@@ -121,7 +126,7 @@ public class FsMiner extends Miner {
 		for (MiningAsteroid a : Fs.miningManager.getMiningAsteroids()) {
 			float d = Utility.distance(this, a);
 
-			if (d < nearestDistance && a.isOpen() && a.hasMinerals()) {
+			if (d < nearestDistance && a.isOpen() && a.hasMinerals() && a.getAsteroid().hasMiningSlots()) {
 				nearestDistance = d;
 				nearestTarget = a;
 			}
@@ -139,7 +144,7 @@ public class FsMiner extends Miner {
 		for (HighYieldMiningAsteroid a : Fs.miningManager.getHighYieldMiningAsteroids()) {
 			float d = Utility.distance(this, a);
 
-			if (d < nearestDistance && a.hasMinerals()) {
+			if (d < nearestDistance && a.isOpen() && a.hasMinerals() && a.getAsteroid().hasMiningSlots()) {
 				nearestDistance = d;
 				nearestTarget = a;
 			}
@@ -147,18 +152,27 @@ public class FsMiner extends Miner {
 		return nearestTarget;
 	}
 
-	public MiningAsteroid bestAsteroid() {
+	final public MiningAsteroid bestAsteroid() {
+
+		if (nearestOpenHighYieldMiningAsteroid() == null && nearestOpenMiningAsteroid() == null) {
+
+			return null;
+
+		} else if (nearestOpenHighYieldMiningAsteroid() == null) {
+
+			return nearestOpenMiningAsteroid();
+
+		} else if (nearestOpenMiningAsteroid() == null) {
+
+			return nearestOpenHighYieldMiningAsteroid();
+		}
 
 		checkTimes();
-		if (nearestOpenHighYieldMiningAsteroid() != null) {
-			if (timeHigh < timeNorm) {
-				return nearestOpenHighYieldMiningAsteroid();
-			} else {
-				return nearestOpenMiningAsteroid();
-			}
-		} else {
-			return nearestOpenMiningAsteroid();
+
+		if (timeHigh < timeNorm) {
+			return nearestOpenHighYieldMiningAsteroid();
 		}
+		return nearestOpenMiningAsteroid();
 	}
 
 	public void checkTimes() {

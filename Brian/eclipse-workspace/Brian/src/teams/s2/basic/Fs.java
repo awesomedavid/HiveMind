@@ -77,22 +77,24 @@ public class Fs extends Player {
 		// To build a unit, use the relevant addUnitToQueue method.
 		// It will only be added to your build queue if you can afford it.
 
-		if (Game.getTime() > 100) {
-			if (countMyMiners() < 4) {
-				addMinerToQueue();
-			} else if (getMinerals() >= 37) {
-				squadrons.add(new Squadron(this));
-			}
-		} else {
-			if (countMyMiners() < 3) {
-				addMinerToQueue();
-			} else {
-				addRaiderToQueue();
-			}
-		}
-		for (Unit a : getMyUnits(Raider.class)) {
-			a.setOrder(Order.ATTACK);
-		}
+//		if (Game.getTime() > 10) {
+//			if (countMyMiners() < 4) {
+//				addMinerToQueue();
+//			} else if (getMinerals() >= 12) {
+//				squadrons.add(new Squadron(this));
+//			}
+//		} else {
+//			if (countMyMiners() < 3) {
+//				addMinerToQueue();
+//			} else {
+//				addRaiderToQueue();
+//			}
+//		}
+//		for (Unit a : getMyUnits(Raider.class)) {
+//			a.setOrder(Order.ATTACK);
+//		}
+		
+		addMinerToQueue();
 
 		// Unit a = (getMyUnits(FsRaider.class).get(0));
 
