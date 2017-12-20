@@ -17,15 +17,20 @@ public class Squadron{
 	private final static int SQUAD_RAIDER_NUM = 4;
 	private final static int SQUAD_ASSAULT_NUM = 2;
 	private final static int SQUAD_SPECIALIST_NUM = 1;
+	
+	private Fs p;
+	
 
 	private ArrayList<Unit> units;
 
-	public Squadron(int num1, int num2, int num3) throws SlickException {		
-		//create();	
+	public Squadron(Fs fs) throws SlickException {		
+			
+		p = fs;
+		create();
 	}
 	
 	public void create() {
-		//Fs.addGroup(SQUAD_RAIDER_NUM, SQUAD_ASSAULT_NUM, SQUAD_SPECIALIST_NUM);
+		p.addGroup(SQUAD_RAIDER_NUM, SQUAD_ASSAULT_NUM, SQUAD_SPECIALIST_NUM);
 	}
 
 	public ArrayList<Unit> getUnits() {
@@ -49,7 +54,7 @@ public class Squadron{
 	public ArrayList<Assault> getAssaults() {
 		ArrayList<Assault> assaults = new ArrayList<Assault>();
 		for (Unit u : getUnits()) {
-			if (u instanceof Raider) {
+			if (u instanceof Assault) {
 				assaults.add((Assault) u);
 			}
 		}
