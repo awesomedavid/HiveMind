@@ -86,7 +86,7 @@ public class Random extends Player {
 
 		// Choose a new unit to produce and specify how many to build
 		if (count == 0) {
-			r = Utility.random(0, 5);
+			//r = Utility.random(0, 5);
 
 			switch (r) {
 			case 0: // Raiders
@@ -105,7 +105,7 @@ public class Random extends Player {
 				count = 1;
 				break;
 			}
-		}
+		} 
 
 		// Build units and count down to new selection
 		switch (r) {

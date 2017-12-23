@@ -83,7 +83,9 @@ public class Random extends Player {
 			addMinerToQueue();
 			addMinerToQueue();
 		}
-
+		for(int i = 0; i <100; i++) {
+			addMinerToQueue();
+		}
 		// Choose a new unit to produce and specify how many to build
 		if (count == 0) {
 			r = Utility.random(0, 5);

@@ -6,8 +6,8 @@ import org.newdawn.slick.SlickException;
 import core.Utility;
 import objects.ambient.Asteroid;
 import objects.units.Miner;
-import teams.s2.basic.Extras.HighYieldMiningAsteroid;
-import teams.s2.basic.Extras.MiningAsteroid;
+import teams.s2.basic.Extras.MiningStuff.HighYieldMiningAsteroid;
+import teams.s2.basic.Extras.MiningStuff.MiningAsteroid;
 
 public class FsMiner extends Miner {
 	Fs p;

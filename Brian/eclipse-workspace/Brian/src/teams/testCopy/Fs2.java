@@ -30,8 +30,8 @@ import objects.upgrades.SpecialistRift;
 import objects.upgrades.SupportEnergy;
 import objects.upgrades.SupportFix;
 import scenario.Scenario;
-import teams.s2.basic.Extras.MiningAsteroid;
-import teams.s2.basic.Extras.MiningManager;
+import teams.s2.basic.Extras.MiningStuff.MiningAsteroid;
+import teams.s2.basic.Extras.MiningStuff.MiningManager;
 import weapons.RaiderAttack;
 
 public class Fs2 extends Player {

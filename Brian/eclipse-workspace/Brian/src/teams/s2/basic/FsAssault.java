@@ -8,12 +8,16 @@ import objects.units.Unit;
 
 public class FsAssault extends Assault {
 	Fs p;
+	
+	private boolean inSquad;
 
 	/***************** Constructor ***************/
 	
 	public FsAssault(Fs p) throws SlickException {
 		super(p);
 		this.p = p;
+		
+		setInSquad(false);
 	}
 
 	/***************** Action Method ***************/
@@ -24,7 +28,7 @@ public class FsAssault extends Assault {
 		
 		Unit a = nearestEnemy();
 
-		moveTo(a);
+		//moveTo(a);
 		shoot(a);
 
 	}
@@ -65,5 +69,13 @@ public class FsAssault extends Assault {
 
 		// This method allows you to draw things on the screen.  It's only visible if you enable  
 		// that player's drawings.  Press 'q' to enable drawings for BLUE and 'e' for RED.
+	}
+	
+	public boolean isInSquad() {
+		return inSquad;
+	}
+
+	public void setInSquad(boolean inSquad) {
+		this.inSquad = inSquad;
 	}
 }

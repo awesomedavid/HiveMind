@@ -50,7 +50,7 @@ public class Game extends BasicGameState
 		playerOne = new Fs(Values.BLUE_ID, this);
 		playerOne.setDifficultyRating(1);			
 		
-		playerTwo = new Fs2(Values.RED_ID, this);
+		playerTwo = new Random(Values.RED_ID, this);
 		playerTwo.setDifficultyRating(1);
 	}
 	
