@@ -23,9 +23,6 @@ public class FsSpecialist extends Specialist {
 	/***************** Action Method ***************/
 	
 	public void action() {
-		
-		// This method is called every frame, BEFORE the order method is called
-		
 		Unit e = nearestEnemy();
 		if(e instanceof BaseShip && Utility.distance(getHomeBase(),getEnemyBase())<500) {
 			moveTo(e);
@@ -80,13 +77,14 @@ public class FsSpecialist extends Specialist {
 			moveTo(getEnemyBase());
 			shoot(getEnemyBase());
 		}
+		
 
 	}
 	
 	/***************** Order Methods ***************/
 
 	protected void attack() {
-		// This method is called every frame while the unit's order is set to ATTACK
+		
 	}
 
 	protected void defend() {

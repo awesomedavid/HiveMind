@@ -49,9 +49,11 @@ public class FsRaider extends Raider {
 			if(nearestAlly(Specialist.class)!=null) {
 			moveTo(nearestAlly(Specialist.class));
 			shoot(e);
+			}else if(nearestAlly(Assault.class)!= null){
+				moveTo(nearestAlly(Assault.class));
+				shoot(e);
 			}else {
-				turnTo(nearestEnemy(Assault.class));
-				moveTo(getHomeBase());
+				moveTo(nearestAlly(Miner.class));
 				shoot(e);
 			}
 		}else {
@@ -72,10 +74,7 @@ public class FsRaider extends Raider {
 			moveTo(e);
 			shoot(e);
 		}
-		if(getOwner().countEnemyUnits()<=0 || e == null) {
-			moveTo(getEnemyBase());
-			shoot(getEnemyBase());
-		}
+		
 		}
 		
 

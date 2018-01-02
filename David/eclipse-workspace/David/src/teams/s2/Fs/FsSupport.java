@@ -3,6 +3,10 @@ package teams.s2.Fs;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
+import objects.units.Assault;
+import objects.units.Miner;
+import objects.units.Raider;
+import objects.units.Specialist;
 import objects.units.Support;
 import objects.units.Unit;
 
@@ -20,9 +24,20 @@ public class FsSupport extends Support {
 		
 		// This method is called every frame, BEFORE the relevant order method is called
 		
-		Unit u = nearestAlly();
-		moveTo(nearestAllyExclude(Support.class));
-
+		Unit u = nearestAllyExclude(Support.class);
+		if(!(u instanceof Miner)&&!(u instanceof Support)) {
+		moveTo(u);
+		}else {
+			if(nearestAlly(Specialist.class)!=null) {
+			moveTo(nearestAlly(Specialist.class));
+			}else if(nearestAlly(Assault.class)!=null) {
+				moveTo(nearestAlly(Assault.class));
+			}else if(nearestAlly(Raider.class)!=null) {
+				moveTo(nearestAlly(Raider.class));
+			}else {
+				moveTo(getHomeBase());
+			}
+		}
 		if (u != null && u.isDamaged()) {
 			shoot(u);
 		}

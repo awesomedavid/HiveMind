@@ -35,7 +35,7 @@ public class FsMiner extends Miner {
 		// This method is called every frame, BEFORE the order method is called
 		Unit e = nearestEnemy();
 			
-		if (getDistance(e) < 1055) {
+		if (getDistance(e) < 1155) {
 			stopMine();
 			moveTo(getHomeBase());
 		} else {

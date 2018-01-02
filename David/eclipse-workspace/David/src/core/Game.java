@@ -28,6 +28,7 @@ import objects.units.Unit;
 import scenario.Scenario;
 import teams.s2.Fs.Fs;
 import teams.starter.heavy.Heavy;
+import teams.starter.swarm.Swarm;
 import ui.display.Camera;
 import ui.display.Display;
 import ui.display.Starfield;

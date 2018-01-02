@@ -46,7 +46,7 @@ public class Fs extends Player {
 
 	public Fs(int team, Game g) throws SlickException {
 		super(team, g);
-		setName("MyTeamName");
+		setName("FlashStick");
 		loadImageSet("classic");
 
 		setMiningManager(new MiningManager());
@@ -62,30 +62,31 @@ public class Fs extends Player {
 		if (Game.getTime() == 1) {
 			initializeExtras();
 		}
-		beginResearch(MinerMine.class);
-		beginResearch(AssaultAegis.class);
-		beginResearch(SpecialistReactor.class);
-		beginResearch(AssaultShield.class);
-		beginResearch(RaiderPierce.class);
 		if (countMyMiners() < 2) {
 			addMinerToQueue();
 		}
 		if (countEnemyMiners() > countMyMiners()) {
 			addMinerToQueue();
 		}
+		beginResearch(MinerHull.class);
 		if (countEnemyRaiders() > countMyAssaults() * 3) {
 			addAssaultToQueue();
 		}
+		beginResearch(AssaultShield.class);
 		if (countEnemySpecialists() > countMyRaiders() / 3) {
 			addRaiderToQueue();
 		}
+		beginResearch(RaiderPierce.class);
 		if (countEnemyAssaults() > countMySpecialists()) {
 			addSpecialistToQueue();
 		}
+		beginResearch(SpecialistReactor.class);	
+		beginResearch(AssaultAegis.class);
+		beginResearch(MinerMine.class);
 		if (getMinerals()> 22) {
 			if(countMyAssaults() > countMyRaiders()/3) {
 				addRaiderToQueue();						
-			}else if(countMyUnits()/3<countMySupports()) {
+			}else if(countMyUnits()/3>countMySupports()) {
 				addSupportToQueue();
 			}else {
 				addAssaultToQueue();
