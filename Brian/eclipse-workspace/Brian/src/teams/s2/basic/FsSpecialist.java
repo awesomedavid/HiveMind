@@ -9,24 +9,30 @@ import objects.units.Unit;
 public class FsSpecialist extends Specialist {
 	Fs p;
 
+	private boolean inSquad;
+	private boolean Leader;
+
 	public FsSpecialist(Fs p) throws SlickException {
 		super(p);
 		this.p = p;
+		
+		setInSquad(false);
+		setLeader(false);
 	}
 
 	/***************** Action Method ***************/
-	
+
 	public void action() {
-		
+
 		// This method is called every frame, BEFORE the order method is called
-		
+
 		Unit a = nearestEnemy();
 
-		moveTo(a);
+		//moveTo(a);
 		shoot(a);
 
 	}
-	
+
 	/***************** Order Methods ***************/
 
 	protected void attack() {
@@ -58,11 +64,28 @@ public class FsSpecialist extends Specialist {
 	}
 
 	/***************** DRAW Methods ***************/
-	
+
 	public void draw(Graphics g) {
 
-		// This method allows you to draw things on the screen.  It's only visible if you enable  
-		// that player's drawings.  Press 'q' to enable drawings for BLUE and 'e' for RED.
+		// This method allows you to draw things on the screen. It's only visible if you
+		// enable
+		// that player's drawings. Press 'q' to enable drawings for BLUE and 'e' for
+		// RED.
+	}
+	
+	public boolean isInSquad() {
+		return inSquad;
 	}
 
+	public void setInSquad(boolean inSquad) {
+		this.inSquad = inSquad;
+	}
+
+	public boolean isLeader() {
+		return Leader;
+	}
+
+	public void setLeader(boolean Leader) {
+		this.Leader = Leader;
+	}
 }

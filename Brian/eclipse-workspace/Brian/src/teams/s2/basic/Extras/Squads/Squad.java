@@ -1,47 +1,31 @@
-package teams.s2.basic.Extras;
+package teams.s2.basic.Extras.Squads;
 
 import java.util.ArrayList;
 
 import org.newdawn.slick.SlickException;
 
-import core.Game;
-import objects.base.Player;
 import objects.units.Assault;
 import objects.units.Raider;
 import objects.units.Specialist;
 import objects.units.Unit;
 import teams.s2.basic.Fs;
-import teams.s2.basic.FsRaider;
-import teams.starter.swarm.Swarm;
 
-public class Squadron {
-	private final static int SQUAD_RAIDER_NUM = 4;
-	private final static int SQUAD_ASSAULT_NUM = 2;
-	private final static int SQUAD_SPECIALIST_NUM = 1;
+public abstract class Squad {
 
 	Fs p;
 
 	private ArrayList<Unit> units;
 
-	public Squadron(Fs p) throws SlickException {
+	public Squad(Fs p) throws SlickException {
 
 		this.p = p;
 		units = new ArrayList<Unit>();
-		create();
-		
-		
 	}
 
-	public void create() {
-		for (int i = 0; i < SQUAD_RAIDER_NUM; i++) {
-			p.addRaider();
-		}
-		for (int i = 0; i < SQUAD_ASSAULT_NUM; i++) {
-			p.addAssault();
-		}
-		for (int i = 0; i < SQUAD_SPECIALIST_NUM; i++) {
-			p.addSpecialist();
-		}
+	abstract public void action();
+
+	public void add(Unit u) {
+		units.add(u);
 	}
 
 	public ArrayList<Unit> getUnits() {
@@ -80,5 +64,14 @@ public class Squadron {
 			}
 		}
 		return specialists;
+	}
+	
+	public boolean hasThisUnit(Unit u) {
+		for(int i = 0; i < getUnits().size(); i++) {
+			if(getUnits().get(i) == u) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

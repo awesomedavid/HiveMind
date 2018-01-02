@@ -1,24 +1,29 @@
 package teams.s2.basic;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
 import core.Utility;
+import core.Values;
 import objects.base.Player;
 import objects.units.Assault;
+import objects.units.Miner;
 import objects.units.Raider;
 import objects.units.Unit;
 
 public class FsRaider extends Raider {
 	Fs p;
 
-	private boolean leader;
+	private boolean inSquad;
+
+	Color c;
 
 	public FsRaider(Fs p) throws SlickException {
 		super(p);
 		this.p = p;
 
-		setLeader(false);
+		setInSquad(false);
 	}
 
 	/***************** Action Method ***************/
@@ -26,6 +31,10 @@ public class FsRaider extends Raider {
 	public void action() {
 
 		// This method is called every frame, BEFORE the order method is called
+		// moveTo(nearestEnemy());
+		// moveTo(p.getNearestEnemyExclude(this, Miner.class));
+		shoot(nearestEnemy());
+
 
 	}
 
@@ -34,7 +43,7 @@ public class FsRaider extends Raider {
 	protected void attack() {
 		// This method is called every frame while the unit's order is set to ATTACK
 
-		moveTo(nearestEnemy());
+		// moveTo(nearestEnemy());
 		shoot(nearestEnemy());
 
 	}
@@ -72,13 +81,25 @@ public class FsRaider extends Raider {
 		// enable
 		// that player's drawings. Press 'q' to enable drawings for BLUE and 'e' for
 		// RED.
+
+		if (p.getSquadType(this) == p.getMainArmy()) {
+
+			c = new Color(255, 0, 255, 80);
+
+		} else {
+
+			c = new Color(255, 0, 0, 80);
+		}
+		g.setColor(c);
+
+		g.drawOval(getCenterX() - Values.RAIDER_ATTACK_RANGE, getCenterY() - Values.RAIDER_ATTACK_RANGE, Values.RAIDER_ATTACK_RANGE * 2, Values.RAIDER_ATTACK_RANGE * 2);
 	}
 
-	public boolean isLeader() {
-		return leader;
+	public boolean isInSquad() {
+		return inSquad;
 	}
 
-	public void setLeader(boolean leader) {
-		this.leader = leader;
+	public void setInSquad(boolean inSquad) {
+		this.inSquad = inSquad;
 	}
 }

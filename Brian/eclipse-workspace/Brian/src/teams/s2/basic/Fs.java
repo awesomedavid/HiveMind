@@ -31,36 +31,39 @@ import objects.upgrades.SpecialistRift;
 import objects.upgrades.SupportEnergy;
 import objects.upgrades.SupportFix;
 import scenario.Scenario;
-import teams.s2.basic.Extras.HighYieldMiningAsteroid;
-import teams.s2.basic.Extras.MiningAsteroid;
-import teams.s2.basic.Extras.MiningManager;
-import teams.s2.basic.Extras.Squadron;
+import teams.s2.basic.Extras.MiningStuff.HighYieldMiningAsteroid;
+import teams.s2.basic.Extras.MiningStuff.MiningAsteroid;
+import teams.s2.basic.Extras.MiningStuff.MiningManager;
+import teams.s2.basic.Extras.Squads.AssassinSquad;
+import teams.s2.basic.Extras.Squads.MainArmy;
+import teams.s2.basic.Extras.Squads.Squad;
 import weapons.RaiderAttack;
 
 public class Fs extends Player {
 
 	static MiningManager miningManager;
 
-	private ArrayList<Squadron> squadrons;
+	private Squad mainArmy;
+	private Squad assassins;
 
 	/**************** Constructor ****************/
 
 	public Fs(int team, Game g) throws SlickException {
 		super(team, g);
-		// .g = g;
-		// this.team = team;
+
 		setName("MyTeamName");
 		loadImageSet("classic");
 
 		miningManager = new MiningManager();
 
-		squadrons = new ArrayList<Squadron>();
+		mainArmy = new MainArmy(this);
+		assassins = new AssassinSquad(this);
+
 	}
 
 	/**************** Action Method ****************/
 
 	public void action() throws SlickException {
-
 		// Determine the number of asteroids the initial miners go to and create ships
 		// accordingly
 
@@ -68,71 +71,60 @@ public class Fs extends Player {
 			initializeExtras();
 		}
 
+		if (countMyMiners() < 4) {
+			addMinerToQueue();
+		} else {
+			addRaiderToQueue();
+		}
+
+		if (Game.getTime() % 2 == 0) {
+			assassins.action();
+			mainArmy.action();
+		}
+
+		if (Game.getTime() % 10 == 0) {
+			if (countMyUnits() < 10) {
+				for (int i = 0; i < getMyUnits().size(); i++) {
+
+					Unit a = getMyUnits().get(i);
+
+					if (a instanceof FsRaider && !((FsRaider) a).isInSquad()) {
+						((FsRaider) a).setInSquad(true);
+
+						mainArmy.getUnits().add(a);
+					}
+					if (a instanceof FsAssault && !((FsAssault) a).isInSquad()) {
+						((FsAssault) a).setInSquad(true);
+
+						mainArmy.getUnits().add(a);
+					}
+					if (a instanceof FsSpecialist && !((FsSpecialist) a).isInSquad()) {
+						((FsSpecialist) a).setInSquad(true);
+
+						mainArmy.getUnits().add(a);
+					}
+				}
+			} else {
+				for (int i = 0; i < getMyUnits().size(); i++) {
+
+					Unit a = getMyUnits().get(i);
+
+					if (a instanceof FsRaider && !((FsRaider) a).isInSquad()) {
+						((FsRaider) a).setInSquad(true);
+
+						assassins.getUnits().add(a);
+					}
+				}
+			}
+		}
+
 		// You can research new technologies. The classes are under
 		// "Objects/Units/Upgrades"
 		beginResearch(RaiderPierce.class);
 
-		// miningAsteroids.add(new MiningAsteroid(Game.getAsteroids().get(2)));
-
-		// To build a unit, use the relevant addUnitToQueue method.
-		// It will only be added to your build queue if you can afford it.
-
-//		if (Game.getTime() > 10) {
-//			if (countMyMiners() < 4) {
-//				addMinerToQueue();
-//			} else if (getMinerals() >= 12) {
-//				squadrons.add(new Squadron(this));
-//			}
-//		} else {
-//			if (countMyMiners() < 3) {
-//				addMinerToQueue();
-//			} else {
-//				addRaiderToQueue();
-//			}
-//		}
-//		for (Unit a : getMyUnits(Raider.class)) {
-//			a.setOrder(Order.ATTACK);
-//		}
-		
-		addMinerToQueue();
-
-		// Unit a = (getMyUnits(FsRaider.class).get(0));
-
-		// a.setOrder(Order.ATTACK);
-
-		// You can set up to three messages
 		setMessageOne("Raiders: " + countMyRaiders());
 
 		// For more example code, check out the other "starter" teams
-	}
-	
-	
-	public void addRaider()
-	{
-		try {
-			addRaiderToQueue();
-		} catch (SlickException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	public void addAssault()
-	{
-		try {
-			addAssaultToQueue();
-		} catch (SlickException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	public void addSpecialist()
-	{
-		try {
-			addSpecialistToQueue();
-		} catch (SlickException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	/**************** Draw Method ****************/
@@ -162,7 +154,7 @@ public class Fs extends Player {
 
 				if (Game.getAsteroids().get(i) instanceof HighYieldAsteroid) {
 
-					miningManager.getHighYieldMiningAsteroids()
+					MiningManager.getHighYieldMiningAsteroids()
 							.add(new HighYieldMiningAsteroid((HighYieldAsteroid) Game.getAsteroids().get(i)));
 				} else {
 					miningManager.getMiningAsteroids().add(new MiningAsteroid(Game.getAsteroids().get(i)));
@@ -192,21 +184,82 @@ public class Fs extends Player {
 		return new FsSupport(this);
 	}
 
-	public void addGroup(int raiderNum, int assaultNum, int specialistNum) {
+	public void addRaider() {
 		try {
-			for (int a = 0; a < raiderNum; a++) {
-				addRaiderToQueue();
-			}
-
-			for (int a = 0; a < assaultNum; a++) {
-				addAssaultToQueue();
-			}
-
-			for (int a = 0; a < specialistNum; a++) {
-				addSpecialistToQueue();
-			}
-
+			addRaiderToQueue();
 		} catch (SlickException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+	}
+
+	public void addAssault() {
+		try {
+			addAssaultToQueue();
+		} catch (SlickException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void addSpecialist() {
+		try {
+			addSpecialistToQueue();
+		} catch (SlickException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public Unit getNearestEnemy(Unit u) {
+		if (getEnemies() == null || getEnemies().isEmpty())
+			return null;
+
+		float nearestDistance = Float.MAX_VALUE;
+		Unit nearestTarget = null;
+
+		for (Unit a : getEnemies()) {
+			float d = Utility.distance(u, a);
+
+			if (d < nearestDistance) {
+				nearestDistance = d;
+				nearestTarget = a;
+			}
+		}
+		return nearestTarget;
+	}
+
+	public Unit getNearestEnemyExclude(Unit u, Class<? extends Unit> clazz) {
+		if (getEnemies() == null || getEnemies().isEmpty())
+			return null;
+
+		float nearestDistance = Float.MAX_VALUE;
+		Unit nearestTarget = null;
+
+		for (Unit a : getEnemies()) {
+			float d = Utility.distance(u, a);
+
+			if (d < nearestDistance && !clazz.isAssignableFrom(a.getClass())) {
+				nearestDistance = d;
+				nearestTarget = a;
+			}
+		}
+		return nearestTarget;
+	}
+
+	public Squad getSquadType(Unit u) {
+		if (mainArmy.hasThisUnit(u)) {
+			return mainArmy;
+		} else {
+			return assassins;
+		}
+	}
+
+	public Squad getMainArmy() {
+		return mainArmy;
+	}
+
+	public Squad getAssassins() {
+		return assassins;
 	}
 }

@@ -6,7 +6,7 @@ import org.newdawn.slick.SlickException;
 import core.Utility;
 
 import objects.units.Miner;
-import teams.s2.basic.Extras.MiningAsteroid;
+import teams.s2.basic.Extras.MiningStuff.MiningAsteroid;
 
 public class Fs2Miner extends Miner {
 	Fs2 p;
