@@ -48,7 +48,7 @@ public class AnimBeam extends Animation {
 
 
 		g.drawLine(origin.getCenterX(), origin.getCenterY(), target.getCenterX(), target.getCenterY());
-		g.setLineWidth(1);
+		g.resetLineWidth();
 
 		// g.fillOval(target.getXCenter(), target.getYCenter(), 100, 100);
 

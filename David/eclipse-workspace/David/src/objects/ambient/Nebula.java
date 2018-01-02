@@ -110,7 +110,7 @@ public class Nebula extends Ambient
 		g.drawImage(image, x, y);
 		//g.setColor(Color.red);
 		//g.drawOval(x+w/2-radius, y+h/2-radius, radius*2, radius*2);
-		//System.out.println("hello");
+
 	}
 	
 	public int getRadius()

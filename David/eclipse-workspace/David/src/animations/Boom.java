@@ -5,7 +5,7 @@ import org.newdawn.slick.Image;
 
 import core.Game;
 import core.Utility;
-import ui.Images;
+import ui.display.Images;
 
 public class Boom extends Animation {
 	Image image;

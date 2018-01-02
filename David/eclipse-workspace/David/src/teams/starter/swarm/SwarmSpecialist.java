@@ -62,7 +62,7 @@ public class SwarmSpecialist extends Specialist {
 		// Otherwise move to preset location
 		else
 		{
-			moveTo(-3000, 0);
+			moveTo(0, -3000);
 		}
 	}
 

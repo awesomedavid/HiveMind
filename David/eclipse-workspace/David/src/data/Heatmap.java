@@ -6,7 +6,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Point;
 
 import core.Values;
-import ui.Fonts;
+import ui.display.Fonts;
 
 
 class Heatmap {

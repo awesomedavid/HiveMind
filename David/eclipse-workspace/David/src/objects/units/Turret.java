@@ -6,7 +6,7 @@ import org.newdawn.slick.geom.Point;
 
 import core.Utility;
 import core.Values;
-import ui.Images;
+import ui.display.Images;
 import weapons.TurretAttack;
 
 public final class Turret extends Unit {

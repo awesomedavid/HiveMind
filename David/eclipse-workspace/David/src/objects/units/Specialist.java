@@ -10,7 +10,7 @@ import objects.base.Player;
 import objects.upgrades.SpecialistKinetic;
 import objects.upgrades.SpecialistReactor;
 import objects.upgrades.SpecialistRift;
-import ui.Images;
+import ui.display.Images;
 import weapons.SpecialistAttack;
 
 public abstract class Specialist extends Unit {

@@ -116,7 +116,7 @@ public class BigStar extends Hazard {
 
 
 	public void render(Graphics g) 
-	{
+	{	
 		g.drawImage(image0, x, y);
 		g.drawImage(overlay, x, y); 
 	

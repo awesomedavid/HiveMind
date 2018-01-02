@@ -25,10 +25,12 @@ import scenario.events.Event;
 import scenario.events.None;
 import scenario.events.Pulse;
 import scenario.events.SolarFlare;
+import teams.neutral.collectors.Collector;
 import teams.neutral.pirate.*;
 
 
-public class Scenario {
+public class Scenario 
+{
 	private static String title;
 
 	private Game game;
@@ -45,6 +47,13 @@ public class Scenario {
 	private static int numHighYieldAsteroids;
 	private static int numNebulae;
 	private static int neutralSpawnCooldown;
+	
+	private static int asteroidSpawnWidth;
+	private static int asteroidSpawnHeight;
+	
+	private static int asteroidHighYieldSpawnWidth;
+	private static int asteroidHighYieldSpawnHeight;
+	
 	private static ArrayList<Class<? extends Unit>> unitPack;
 
 	private static Adjective adjective;
@@ -53,38 +62,43 @@ public class Scenario {
 
 	private static Event event;
 
-	public Scenario(Game game) {
+	public Scenario(Game game) throws SlickException {
 
 		this.game = game;
+		game.setNeutral(null);
 		asteroids = new ArrayList<Asteroid>();
 		nebulae = new ArrayList<Nebula>();
 		hazards = new ArrayList<Hazard>();
 
-		numAsteroids = 15;
+		hasNeutralBaseShip = false;
+		neutralBaseShip = null;
+		neutral = null;
+		
+		numAsteroids = 20;
 		numHighYieldAsteroids = 5;
 		numNebulae = 0;
 		neutralSpawnCooldown = 10000;
 
-		battle = Battle.getRandom();
+		asteroidSpawnWidth = Values.ASTEROID_SPAWN_WIDTH;
+		asteroidSpawnHeight = Values.ASTEROID_SPAWN_HEIGHT;
 		
-		if(Game.basicMode)
-		{
-			adjective = Adjective.getBasic();
-			noun = Noun.getBasic();
-		}
-		else
-		{
-			adjective = Adjective.getRandom();
-			noun = Noun.getRandom();
-		}
+		asteroidHighYieldSpawnWidth = Values.ASTEROID_HIGH_YIELD_SPAWN_WIDTH;
+		asteroidHighYieldSpawnHeight = Values.ASTEROID_HIGH_YIELD_SPAWN_HEIGHT;
 		
 		event = new None();
 		unitPack = new ArrayList<Class<? extends Unit>>();
+		
 
+		battle = Battle.getRandom();
+
+		
+		selectNoun();
 		applyAdjective();
-		applyNoun();
+
 
 	}
+
+
 
 	public void manageEvents() {
 		if (hasEvent()) {
@@ -93,76 +107,43 @@ public class Scenario {
 
 	}
 
-	public void applyAdjective() {
 
-		switch (adjective) {
-
-		case ABUNDANT:
-			numAsteroids += 10;
-			break;
-
-		case AVERAGE:
-			numAsteroids += 5;
-			break;
-
-		case BARREN:
-			numHighYieldAsteroids -= 5;
-			break;
-
-		case HIDDEN:
-			numNebulae += 1;
-			break;
-
-		case LEGENDARY:
-			noun = Adjective.getLegendaryNoun();
-			break;
-
-		case POOR:
-			numAsteroids += 5;
-			numHighYieldAsteroids -= 5;
-			break;
-
-		case RELENTLESS:		// DOESN'T WORK - at present, nothing spawns on edges
-			noun = Adjective.getRelentlessNoun();
-			neutralSpawnCooldown *= .75;
-			break;
-			
-		case RICH:
-			numAsteroids -= 5;
-			numHighYieldAsteroids += 5;
-			break;
-
-		case SHROUDED:
-			numNebulae += 2;
-			break;
-
-		case SPARSE:
-			// Nothing
-			break;
-
-		case UNSTABLE:
-			noun = Adjective.getUnstableNoun();
-			break;
-
-		default:
-			break;
-
-
-		}
-
-	}
 
 	// The NOUN determines the major set piece that defines the environment
-	public void applyNoun() {
+	public void selectNoun() throws SlickException
+	{
+		if(Game.basicMode)
+		{
+			noun = Noun.getBasic();
+		}
+		else
+		{
+			noun = Noun.getRandom();
+		}
+		
+		
 		switch (noun) {
-		case STAR:
+		
+		case VOID:
+			adjective = Adjective.getBasicAdjective();
+			numAsteroids -= 5;
 			break;
 
+
 		case NEBULA:
+			adjective = Adjective.getNebulaAdjective();
 			numNebulae += 3;
 			break;
 
 		case ASTEROID_BELT:
+			adjective = Adjective.getAsteroidBeltAdjective();
+			
+			asteroidSpawnWidth = 5500;
+			asteroidSpawnHeight = Values.PLAYFIELD_HEIGHT;
+
+			asteroidHighYieldSpawnWidth = 5500;
+			asteroidHighYieldSpawnHeight = Values.PLAYFIELD_HEIGHT;
+			
 			if (adjective.equals(Adjective.LEGENDARY)) {
 				numHighYieldAsteroids *= 1.5 + numAsteroids;
 				numAsteroids = 0;
@@ -172,17 +153,146 @@ public class Scenario {
 			}
 			break;
 
+		case CLUSTER:
+			adjective = Adjective.getAsteroidAdjective();
+			asteroidSpawnWidth *= .67;
+			asteroidSpawnHeight *= .67;
+			asteroidHighYieldSpawnWidth *= .67;
+			asteroidHighYieldSpawnHeight *= .67;
+			break;
+			
+		
+		case PULSAR:
+			adjective = Adjective.getHazardAdjective();
+			break;
+			
+		case STAR:
+			adjective = Adjective.getHazardAdjective();
+				break;
+			
 		case PIRATES:
+			adjective = Adjective.getPirateAdjective();
 			hasNeutralBaseShip = true;
+			neutral = new Pirate(Values.NEUTRAL_ID, game);
+			setupFaction(neutral);
+			break;
+			
+		case COLLECTORS:
+
+			adjective = Adjective.getCollectorsAdjective();
+			hasNeutralBaseShip = true;
+			neutral = new Collector(Values.NEUTRAL_ID, game);
+			setupFaction(neutral);
 			break;
 			
 		default:
+			adjective = Adjective.getBasicAdjective();
 			break;
 
 		}
 
 	}
+	
 
+	public void setupFaction(Player neutral) throws SlickException
+	{
+		game.setNeutral(neutral);
+		neutralBaseShip = new BaseShip(neutral);
+		game.addUnit(neutralBaseShip);
+		neutral.setStartingMinerals();		
+	}
+	
+	public void applyAdjective() {
+
+		switch (adjective) {
+		
+		// No Effects
+			
+		case AVERAGE:
+			break;
+			
+		case NORMAL:
+			break;
+			
+		// Asteroid Effects (Number/Type)	
+			
+		case ABUNDANT:
+			numAsteroids += 15;
+			break;
+			
+		case BARREN:
+			numHighYieldAsteroids -= 5;
+			break;
+
+		case POOR:
+			numAsteroids += 10;
+			numHighYieldAsteroids -= 5;
+			break;
+			
+		case RICH:
+			numAsteroids -= 10;
+			numHighYieldAsteroids += 5;
+			break;
+
+		case SPARSE:
+			numAsteroids -= 5;
+			break;
+	
+		// Asteroid Effects (Location)	
+		
+		case DENSE:			
+			asteroidSpawnWidth *= .67;
+			asteroidSpawnHeight *= .67;
+			asteroidHighYieldSpawnWidth *= .67;
+			asteroidHighYieldSpawnHeight *= .67;
+			numAsteroids += 5;
+			break;
+			
+		// Nebula Effects
+			
+		case HIDDEN:
+			numNebulae += 1;
+			break;
+			
+		case SHROUDED:
+			numNebulae += 2;
+			break;
+
+		// Hazard Effects	
+			
+		case LEGENDARY:
+			break;
+	
+		case UNSTABLE:
+			break;
+		
+		// Faction Effects
+			
+			
+		case READY:	
+			neutral.addMinerals(30);
+				break;
+				
+		case RESPECTFUL:		
+			if(neutral instanceof Pirate)
+			{
+				((Pirate) neutral).beRespectful();
+			}
+				break;
+				
+		case RELENTLESS:		
+			neutral.setDifficultyRating(1.5f);
+			break;
+
+			
+		default:
+			break;
+
+
+		}
+
+	}
+	
 	public void addToUnitPack(Class<? extends Unit> clazz, int number) {
 		for (int i = 0; i < number; i++) {
 			unitPack.add(clazz);
@@ -299,15 +409,6 @@ public class Scenario {
 	{
 		title = battle + " the " + adjective + " " + noun;
 
-		neutral = new Pirate(Values.NEUTRAL_ID, game);
-		game.setNeutral(neutral);
-
-		if (hasNeutralBaseShip) {
-			neutralBaseShip = new BaseShip(neutral);
-			game.addUnit(neutralBaseShip);
-			neutral.setStartingMinerals();
-		}
-
 		// Spawn Asteroids
 		spawnAsteroidRandom(numAsteroids);
 		spawnAsteroidRandomHighYield(numHighYieldAsteroids);
@@ -394,12 +495,109 @@ public class Scenario {
 		return noun == Noun.PULSAR;
 	}
 
-	public Adjective getAdjective() {
+	public static Adjective getAdjective() {
 		return adjective;
+	}
+	
+	public static Noun getNoun()
+	{
+		return noun;
 	}
 
 	/********** SPAWNING METHODS ***********/
 
+	
+
+	public void spawnNebulaRandom(int amount) throws SlickException {
+		for (int i = 0; i < amount; i++) {
+			int x = Utility.random(-Values.NEBULA_SPAWN_WIDTH, Values.NEBULA_SPAWN_HEIGHT);
+			int y = Utility.random(-Values.NEBULA_SPAWN_WIDTH, Values.NEBULA_SPAWN_HEIGHT);
+			int size = Utility.random(Values.NEBULA_MIN_SIZE, Values.NEBULA_MAX_SIZE);
+
+			nebulae.add(new Nebula(x, y, size));
+
+			if (hasSetPiece()) {
+				nebulae.add(new Nebula(-x, y, size));
+			} else {
+				nebulae.add(new Nebula(-x, -y, size));
+			}
+		}
+
+	}
+
+	public void spawnBigStar() throws SlickException {
+		BigStar s;
+		if (isLegendary()) {
+			s = new BigStar(0, Values.HAZARD_Y_POSITION, Values.STAR_LEGENDARY_SIZE);
+		} else {
+			s = new BigStar(0, Values.HAZARD_Y_POSITION);
+
+		}
+
+		hazards.add(s);
+		event = new SolarFlare(neutral, isUnstable(), isLegendary());
+		event.linkHazard(s);
+	}
+
+	public void spawnPulsar() throws SlickException {
+		Pulsar p;
+		if (isLegendary()) {
+			p = new Pulsar(0, Values.HAZARD_Y_POSITION, Values.PULSAR_LEGENDARY_SIZE);
+		} else {
+			p = new Pulsar(0, Values.HAZARD_Y_POSITION);
+		}
+
+		hazards.add(p);
+		event = new Pulse(neutral, isUnstable(), isLegendary());
+		event.linkHazard(p);
+	}
+	
+	public void spawnMoon() throws SlickException {
+		Moon m;
+		if (isLegendary()) {			
+			m = new Moon(0,  0, Values.ASTEROID_MAX_SIZE*6);
+		} else {
+			m = new Moon(0,  0, Values.ASTEROID_MAX_SIZE*4);
+		}
+
+		asteroids.add(0, m);
+	}
+
+	public void spawnAsteroidRandom(int amount) throws SlickException {
+		for (int i = 0; i < amount; i++) 
+		{
+			int rX = Utility.random(-asteroidSpawnWidth / 2, asteroidSpawnWidth / 2);
+			int rY = Utility.random(-asteroidSpawnHeight / 2, asteroidSpawnHeight / 2);
+
+			if (Asteroid.isValidSpawn(rX, rY))
+			{
+				spawnAsteroid(rX, rY, randomAsteroidSize());
+			}
+			else
+			{
+				i--;
+			}
+
+		}
+	}
+
+	public void spawnAsteroidRandomHighYield(int amount) throws SlickException {
+		for (int i = 0; i < amount; i++) {
+			int rX = Utility.random(-asteroidHighYieldSpawnWidth / 2, asteroidHighYieldSpawnWidth / 2);
+			int rY = Utility.random(-asteroidHighYieldSpawnHeight / 2, asteroidHighYieldSpawnHeight / 2);
+
+			if (Asteroid.isValidSpawn(rX, rY))
+			{
+				spawnHighYieldAsteroid(rX, rY, randomAsteroidSize());
+			}
+			else
+			{
+				i--;
+			}
+
+		}
+	}
+	
 	public void spawnAsteroid(int x, int y, int size) throws SlickException {
 		float xSpeed = Utility.random(Values.ASTEROID_MIN_SPEED, Values.ASTEROID_MAX_SPEED);
 		float ySpeed = Utility.random(Values.ASTEROID_MIN_SPEED, Values.ASTEROID_MAX_SPEED);
@@ -464,98 +662,6 @@ public class Scenario {
 			return Values.ASTEROID_MID_SIZE;
 		}
 
-	}
-
-	public void spawnNebulaRandom(int amount) throws SlickException {
-		for (int i = 0; i < amount; i++) {
-			int x = Utility.random(-Values.NEBULA_SPAWN_WIDTH, Values.NEBULA_SPAWN_HEIGHT);
-			int y = Utility.random(-Values.NEBULA_SPAWN_WIDTH, Values.NEBULA_SPAWN_HEIGHT);
-			int size = Utility.random(Values.NEBULA_MIN_SIZE, Values.NEBULA_MAX_SIZE);
-
-			nebulae.add(new Nebula(x, y, size));
-
-			if (hasSetPiece()) {
-				nebulae.add(new Nebula(-x, y, size));
-			} else {
-				nebulae.add(new Nebula(-x, -y, size));
-			}
-		}
-
-	}
-
-	public void spawnBigStar() throws SlickException {
-		BigStar s;
-		if (isLegendary()) {
-			s = new BigStar(0, Values.HAZARD_Y_POSITION, Values.STAR_LEGENDARY_SIZE);
-		} else {
-			s = new BigStar(0, Values.HAZARD_Y_POSITION);
-
-		}
-
-		hazards.add(s);
-		event = new SolarFlare(neutral, isUnstable(), isLegendary());
-		event.linkHazard(s);
-	}
-
-	public void spawnPulsar() throws SlickException {
-		Pulsar p;
-		if (isLegendary()) {
-			p = new Pulsar(0, Values.HAZARD_Y_POSITION, Values.PULSAR_LEGENDARY_SIZE);
-		} else {
-			p = new Pulsar(0, Values.HAZARD_Y_POSITION);
-		}
-
-		hazards.add(p);
-		event = new Pulse(neutral, isUnstable(), isLegendary());
-		event.linkHazard(p);
-	}
-	
-	public void spawnMoon() throws SlickException {
-		Moon m;
-		if (isLegendary()) {			
-			m = new Moon(0,  0, Values.ASTEROID_MAX_SIZE*6);
-		} else {
-			m = new Moon(0,  0, Values.ASTEROID_MAX_SIZE*4);
-		}
-
-		asteroids.add(m);
-	}
-
-	public void spawnAsteroidRandom(int amount) throws SlickException {
-		for (int i = 0; i < amount; i++) {
-			int rX = Utility.random(-Values.ASTEROID_SPAWN_WIDTH / 2, Values.ASTEROID_SPAWN_WIDTH / 2);
-			int rY = Utility.random(-Values.ASTEROID_SPAWN_HEIGHT / 2, Values.ASTEROID_SPAWN_HEIGHT / 2);
-
-			if (Asteroid.isValidSpawn(rX, rY))
-			{
-				spawnAsteroid(rX, rY, randomAsteroidSize());
-			}
-			else
-			{
-				i--;
-			}
-
-		}
-	}
-
-	public void spawnAsteroidRandomHighYield(int amount) throws SlickException {
-		for (int i = 0; i < amount; i++) {
-			int rX = Utility.random(-Values.ASTEROID_HIGH_YIELD_SPAWN_WIDTH / 2,
-					Values.ASTEROID_HIGH_YIELD_SPAWN_WIDTH / 2);
-
-			int rY = Utility.random(-Values.ASTEROID_HIGH_YIELD_SPAWN_HEIGHT / 2,
-					Values.ASTEROID_HIGH_YIELD_SPAWN_HEIGHT / 2);
-
-			if (Asteroid.isValidSpawn(rX, rY))
-			{
-				spawnHighYieldAsteroid(rX, rY, randomAsteroidSize());
-			}
-			else
-			{
-				i--;
-			}
-
-		}
 	}
 
 }

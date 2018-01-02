@@ -2,7 +2,8 @@ package objects.ambient;
 
 import org.newdawn.slick.SlickException;
 
-import ui.Images;
+import core.Values;
+import ui.display.Images;
 
 public class HighYieldAsteroid extends Asteroid {
 
@@ -10,7 +11,6 @@ public class HighYieldAsteroid extends Asteroid {
 		super(x, y, xSpeed, ySpeed, size);
 		sheet = Images.asteroid2;
 		image = sheet.getSprite(model, 0);
-		// minerals = minerals * Values.ASTEROID_HIGH_YIELD_MULTIPLIER;
 	}
 
 }

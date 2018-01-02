@@ -13,7 +13,7 @@ import effects.Stunned;
 import objects.ambient.BigStar;
 import objects.base.Player;
 import objects.units.Unit;
-import ui.Alert;
+import ui.display.Alert;
 
 public class Pulse extends Event {
 	private int range;

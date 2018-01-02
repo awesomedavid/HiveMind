@@ -1,18 +1,17 @@
 package weapons;
 
+import org.newdawn.slick.geom.Point;
+
 import animations.AnimBeam;
 import core.Game;
 import core.Utility;
 import core.Values;
 import objects.units.Unit;
-import ui.Audio;
-
+import ui.sound.Audio;
 
 public class MinerAttack extends WeaponBeam {
-	float heal;
 
-	public MinerAttack(Unit owner) 
-	{
+	public MinerAttack(Unit owner) {
 		super(owner);
 		active = false;
 		damage = Values.MINER_ATTACK_DAMAGE;
@@ -23,23 +22,20 @@ public class MinerAttack extends WeaponBeam {
 	}
 
 	public boolean use(Unit a) {
-		if (super.use(a)) 
-		{
+		if (super.use(a)) {
 			owner.actionComplete();
 			shotTimer = cooldown;
 			animation(a);
-			Audio.laser[Utility.random(0, 2)].play(owner.getPosition(), 1.5f, .6f);	
+			Audio.playLaser(owner.getPosition());
 
 			return true;
 
-		} 
-		else {
+		} else {
 			return false;
 		}
 	}
 
-	public void animation(Unit a) 
-	{
+	public void animation(Unit a) {
 		Game.addAnimation(new AnimBeam(owner, a, 5, 60, true));
 	}
 

@@ -6,7 +6,7 @@ import core.Values;
 import effects.Heal;
 import objects.units.Unit;
 import objects.upgrades.SupportFix;
-import ui.Audio;
+import ui.sound.Audio;
 
 public class SupportHeal extends WeaponBeam {
 	float heal;
@@ -29,14 +29,19 @@ public class SupportHeal extends WeaponBeam {
 	}
 
 	public boolean use(Unit a) {
-		if (canShoot(a) && owner.hasEnergy(Values.SUPPORT_HEAL_ENERGY_COST)) {
-			// Basic Damage
+		
+		if (owner.getHealTimer() >= Values.SUPPORT_HEAL_COOLDOWN && canShoot(a) && owner.hasEnergy(Values.SUPPORT_HEAL_ENERGY_COST)) {
+			
+			
+//			System.out.println(Game.getTime() + " " + a);
+			// Basic Heal
 			a.addEffect(new Heal(a, owner.getOwner(), 1, heal));
 			owner.loseEnergy(Values.SUPPORT_HEAL_ENERGY_COST);
 			owner.actionComplete();
-			Audio.heal.play(owner.getPosition());	
+			Audio.playHeal(owner.getPosition());
 			shotTimer = cooldown;
 			animation(a);
+			a.setHealed();
 			
 			if(owner.getOwner().hasResearch(SupportFix.class)) {
 				a.reduceEffects(Values.SUPPORT_UPGRADE_FIX_EFFECT_REDUCTION);

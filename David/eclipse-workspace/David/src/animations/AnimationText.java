@@ -3,7 +3,7 @@ package animations;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
-import ui.Fonts;
+import ui.display.Fonts;
 
 public class AnimationText extends Animation
 {
