@@ -1,27 +1,28 @@
-package teams.s2.basic;
-
+package teams.s2.Fs.Miners;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
 import core.Utility;
-import objects.ambient.Asteroid;
 import objects.units.Miner;
-import teams.s2.basic.Extras.MiningStuff.HighYieldMiningAsteroid;
-import teams.s2.basic.Extras.MiningStuff.MiningAsteroid;
+import objects.units.Unit;
+import teams.s2.Fs.Fs;
+import teams.s2.Fs.Extras.HighYieldMiningAsteroid;
+import teams.s2.Fs.Extras.MiningAsteroid;
 
-public class FsMiner extends Miner {
+public class MinerMine extends Miner {
+
 	Fs p;
 
 	MiningAsteroid a;
 
+	private boolean inMiningQueue;
+
 	float timeHigh = 0;
 	float timeNorm = 0;
 
-	private boolean inMiningQueue;
-
 	/***************** Constructor ***************/
 
-	public FsMiner(Fs p) throws SlickException {
+	public MinerMine(Fs p) throws SlickException {
 		super(p);
 		this.p = p;
 	}
@@ -31,8 +32,16 @@ public class FsMiner extends Miner {
 	public void action() {
 
 		// This method is called every frame, BEFORE the order method is called
-
-		mine();
+		Unit e = nearestEnemy();
+			
+		if (getDistance(e) < 1055) {
+			stopMine();
+			moveTo(getHomeBase());
+		} else {
+			mine();
+		}
+		
+		// if(!isInMiningQueue())
 
 	}
 
@@ -59,7 +68,7 @@ public class FsMiner extends Miner {
 	}
 
 	protected void special() {
-		// This method is called every frame while the unit's order is set to SPECIAL
+
 	}
 
 	protected void run() {
@@ -123,7 +132,7 @@ public class FsMiner extends Miner {
 		float nearestDistance = Float.MAX_VALUE;
 		MiningAsteroid nearestTarget = null;
 
-		for (MiningAsteroid a : Fs.miningManager.getMiningAsteroids()) {
+		for (MiningAsteroid a : Fs.getMiningManager().getMiningAsteroids()) {
 			float d = Utility.distance(this, a);
 
 			if (d < nearestDistance && a.isOpen() && a.hasMinerals() && a.getAsteroid().hasMiningSlots()) {
@@ -141,7 +150,7 @@ public class FsMiner extends Miner {
 		float nearestDistance = Float.MAX_VALUE;
 		HighYieldMiningAsteroid nearestTarget = null;
 
-		for (HighYieldMiningAsteroid a : Fs.miningManager.getHighYieldMiningAsteroids()) {
+		for (HighYieldMiningAsteroid a : Fs.getMiningManager().getHighYieldMiningAsteroids()) {
 			float d = Utility.distance(this, a);
 
 			if (d < nearestDistance && a.isOpen() && a.hasMinerals() && a.getAsteroid().hasMiningSlots()) {

@@ -26,12 +26,11 @@ import objects.units.Mine;
 import objects.units.Turret;
 import objects.units.Unit;
 import scenario.Scenario;
-import teams.s2.basic.Fs;
+import teams.s2.Fs.Fs;
 import teams.starter.random.Random;
 import teams.starter.heavy.Heavy;
 import teams.starter.rush.Rush;
 import teams.starter.swarm.Swarm;
-import teams.testCopy.Fs2;
 import ui.Audio;
 import ui.Camera;
 import ui.Display;
@@ -50,7 +49,7 @@ public class Game extends BasicGameState
 		playerOne = new Fs(Values.BLUE_ID, this);
 		playerOne.setDifficultyRating(1);			
 		
-		playerTwo = new Random(Values.RED_ID, this);
+		playerTwo = new Swarm(Values.RED_ID, this);
 		playerTwo.setDifficultyRating(1);
 	}
 	

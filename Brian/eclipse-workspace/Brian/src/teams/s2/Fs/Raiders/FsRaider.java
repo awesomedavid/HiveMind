@@ -1,40 +1,84 @@
-package teams.s2.basic;
+package teams.s2.Fs.Raiders;
 
-import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
 import core.Utility;
-import core.Values;
-import objects.base.Player;
 import objects.units.Assault;
+import objects.units.BaseShip;
 import objects.units.Miner;
 import objects.units.Raider;
+import objects.units.Specialist;
+import objects.units.Support;
 import objects.units.Unit;
+import objects.units.Unit.Order;
+import teams.s2.Fs.Fs;
 
 public class FsRaider extends Raider {
 	Fs p;
 
-	private boolean inSquad;
-
-	Color c;
-
 	public FsRaider(Fs p) throws SlickException {
 		super(p);
 		this.p = p;
-
-		setInSquad(false);
 	}
 
 	/***************** Action Method ***************/
-
+	
 	public void action() {
-
-		// This method is called every frame, BEFORE the order method is called
-		// moveTo(nearestEnemy());
-		// moveTo(p.getNearestEnemyExclude(this, Miner.class));
-		shoot(nearestEnemy());
-
+		
+		Unit e = nearestEnemy();
+		if(e instanceof BaseShip && Utility.distance(getHomeBase(),getEnemyBase())<500) {
+			moveTo(e);
+			shoot(e);
+		}
+		if(e instanceof BaseShip) {
+			moveTo(nearestAlly(Miner.class));
+			shoot(e);
+		}
+		
+		
+		if(e instanceof Assault) {
+			if(nearestAlly(Assault.class)!=null)
+			moveTo(nearestAlly(Assault.class));
+			else if(nearestAlly(Specialist.class)!=null)
+			moveTo(nearestAlly(Specialist.class));
+			else
+			moveTo(getHomeBase());
+			shoot(e);
+		}
+		if(Utility.distance(e, nearestEnemy(Assault.class))<390) {
+			if(nearestAlly(Specialist.class)!=null) {
+			moveTo(nearestAlly(Specialist.class));
+			shoot(e);
+			}else {
+				turnTo(nearestEnemy(Assault.class));
+				moveTo(getHomeBase());
+				shoot(e);
+			}
+		}else {
+			
+		if(e instanceof Raider) {
+			moveTo(e);
+			shoot(e);
+		}
+		if(e instanceof Specialist) {
+			moveTo(e);
+			shoot(e);
+		}
+		if(e instanceof Miner){
+			moveTo(e);
+			shoot(e);
+		}
+		if(e instanceof Support) {
+			moveTo(e);
+			shoot(e);
+		}
+		if(getOwner().countEnemyUnits()<=0 || e == null) {
+			moveTo(getEnemyBase());
+			shoot(getEnemyBase());
+		}
+		}
+		
 
 	}
 
@@ -42,15 +86,10 @@ public class FsRaider extends Raider {
 
 	protected void attack() {
 		// This method is called every frame while the unit's order is set to ATTACK
-
-		// moveTo(nearestEnemy());
-		shoot(nearestEnemy());
-
 	}
 
 	protected void defend() {
 		// This method is called every frame while the unit's order is set to DEFEND
-		moveTo(getHomeBase());
 	}
 
 	protected void guard() {
@@ -66,7 +105,7 @@ public class FsRaider extends Raider {
 	}
 
 	protected void special() {
-		// This method is called every frame while the unit's order is set to SPECIAL
+
 	}
 
 	protected void run() {
@@ -81,25 +120,5 @@ public class FsRaider extends Raider {
 		// enable
 		// that player's drawings. Press 'q' to enable drawings for BLUE and 'e' for
 		// RED.
-
-		if (p.getSquadType(this) == p.getMainArmy()) {
-
-			c = new Color(255, 0, 255, 80);
-
-		} else {
-
-			c = new Color(255, 0, 0, 80);
-		}
-		g.setColor(c);
-
-		g.drawOval(getCenterX() - Values.RAIDER_ATTACK_RANGE, getCenterY() - Values.RAIDER_ATTACK_RANGE, Values.RAIDER_ATTACK_RANGE * 2, Values.RAIDER_ATTACK_RANGE * 2);
-	}
-
-	public boolean isInSquad() {
-		return inSquad;
-	}
-
-	public void setInSquad(boolean inSquad) {
-		this.inSquad = inSquad;
 	}
 }

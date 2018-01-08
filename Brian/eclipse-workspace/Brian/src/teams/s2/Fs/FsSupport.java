@@ -1,4 +1,4 @@
-package teams.testCopy;
+package teams.s2.Fs;
 
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -6,10 +6,10 @@ import org.newdawn.slick.SlickException;
 import objects.units.Support;
 import objects.units.Unit;
 
-public class Fs2Support extends Support {
-	Fs2 p;
+public class FsSupport extends Support {
+	Fs p;
 
-	public Fs2Support(Fs2 p) throws SlickException {
+	public FsSupport(Fs p) throws SlickException {
 		super(p);
 		this.p = p;
 	}
