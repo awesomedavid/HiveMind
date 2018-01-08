@@ -3,6 +3,7 @@ package teams.s2.Fs.Raiders;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
+import core.Game;
 import core.Utility;
 import objects.units.Assault;
 import objects.units.BaseShip;
@@ -23,62 +24,84 @@ public class FsRaider extends Raider {
 	}
 
 	/***************** Action Method ***************/
-	
+
 	public void action() {
-		
+
 		Unit e = nearestEnemy();
-		if(e instanceof BaseShip && Utility.distance(getHomeBase(),getEnemyBase())<500) {
-			moveTo(e);
-			shoot(e);
-		}
-		if(e instanceof BaseShip) {
-			moveTo(nearestAlly(Miner.class));
-			shoot(e);
-		}
-		
-		
-		if(e instanceof Assault) {
-			if(nearestAlly(Assault.class)!=null)
-			moveTo(nearestAlly(Assault.class));
-			else if(nearestAlly(Specialist.class)!=null)
-			moveTo(nearestAlly(Specialist.class));
-			else
-			moveTo(getHomeBase());
-			shoot(e);
-		}
-		if(Utility.distance(e, nearestEnemy(Assault.class))<390) {
-			if(nearestAlly(Specialist.class)!=null) {
-			moveTo(nearestAlly(Specialist.class));
-			shoot(e);
-			}else {
-				turnTo(nearestEnemy(Assault.class));
-				moveTo(getHomeBase());
-				shoot(e);
+		// if (e instanceof BaseShip && Utility.distance(getHomeBase(), getEnemyBase())
+		// < 500) {
+		// moveTo(e);
+		// shoot(e);
+		// }
+		// if (e instanceof BaseShip) {
+		// moveTo(nearestAlly(Miner.class));
+		// shoot(e);
+		// }
+		//
+		// if (e instanceof Assault) {
+		// if (nearestAlly(Assault.class) != null)
+		// moveTo(nearestAlly(Assault.class));
+		// else if (nearestAlly(Specialist.class) != null)
+		// moveTo(nearestAlly(Specialist.class));
+		// else
+		// moveTo(getHomeBase());
+		// shoot(e);
+		// }
+		// if (Utility.distance(e, nearestEnemy(Assault.class)) < 390) {
+		// if (nearestAlly(Specialist.class) != null) {
+		// moveTo(nearestAlly(Specialist.class));
+		// shoot(e);
+		// } else {
+		// turnTo(nearestEnemy(Assault.class));
+		// moveTo(getHomeBase());
+		// shoot(e);
+		// }
+		// } else {
+		//
+		// if (e instanceof Raider) {
+		// moveTo(e);
+		// shoot(e);
+		// }
+		// if (e instanceof Specialist) {
+		// moveTo(e);
+		// shoot(e);
+		// }
+		// if (e instanceof Miner) {
+		// moveTo(e);
+		// shoot(e);
+		// }
+		// if (e instanceof Support) {
+		// moveTo(e);
+		// shoot(e);
+		// }
+		// if (getOwner().countEnemyUnits() <= 0 || e == null) {
+		// moveTo(getEnemyBase());
+		// shoot(getEnemyBase());
+		// }
+		// }
+		if (p.countEnemyUnits() - p.countEnemyMiners() > 5) {
+			if (getDistance(e) < 2000 && p.countEnemyMiners() > 0) {
+				if (e instanceof Miner) {
+					moveTo(e);
+				} else {
+					turnTo(e);
+					move((int) getAngleToward(e.getCenterX(), e.getCenterY()) + 120);
+				}
+			} else {
+				if (p.getMostVulerableEnemy(Miner.class) != null) {
+					moveTo(p.getMostVulerableEnemy(Miner.class));
+				} else {
+					moveTo(e);
+				}
 			}
-		}else {
-			
-		if(e instanceof Raider) {
-			moveTo(e);
-			shoot(e);
+		} else {
+			if (Game.getTime() > 10000 && getDistance(getEnemyBase()) < 7500 && p.countMyRaiders() > 15) {
+				moveTo(e);
+			} else {
+				moveTo(getHomeBase());
+			}
 		}
-		if(e instanceof Specialist) {
-			moveTo(e);
-			shoot(e);
-		}
-		if(e instanceof Miner){
-			moveTo(e);
-			shoot(e);
-		}
-		if(e instanceof Support) {
-			moveTo(e);
-			shoot(e);
-		}
-		if(getOwner().countEnemyUnits()<=0 || e == null) {
-			moveTo(getEnemyBase());
-			shoot(getEnemyBase());
-		}
-		}
-		
+		shoot(e);
 
 	}
 

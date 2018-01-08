@@ -39,17 +39,17 @@ import ui.Starfield;
 public class Game extends BasicGameState 
 {
 	// Common game setting toggles
-	public static boolean infoMode = false;		// Displays additional information in the UI.  Press 'i' to toggle in game
-	public static boolean sfxOn = true;			// Enable sound effects
-	public static boolean musicOn = true;		// Enables music.  Press 'm' to cycle track in game.
-	public static boolean basicMode = true;		// Hides complicated events, such as Solar Flares and Pirates
+	public static boolean infoMode = true;		// Displays additional information in the UI.  Press 'i' to toggle in game
+	public static boolean sfxOn = false;			// Enable sound effects
+	public static boolean musicOn = false;		// Enables music.  Press 'm' to cycle track in game.
+	public static boolean basicMode = false;		// Hides complicated events, such as Solar Flares and Pirates
 	
 	// Player setup
 	private void setPlayers() throws SlickException {
 		playerOne = new Fs(Values.BLUE_ID, this);
 		playerOne.setDifficultyRating(1);			
 		
-		playerTwo = new Swarm(Values.RED_ID, this);
+		playerTwo = new Heavy(Values.RED_ID, this);
 		playerTwo.setDifficultyRating(1);
 	}
 	

@@ -75,28 +75,29 @@ public class Fs extends Player {
 		if (countEnemyMiners() > countMyMiners()) {
 			addMinerToQueue();
 		}
-		if (countEnemyRaiders() > countMyAssaults() * 3) {
-			addAssaultToQueue();
-		}
-		if (countEnemySpecialists() > countMyRaiders() / 3) {
-			addRaiderToQueue();
-		}
-		if (countEnemyAssaults() > countMySpecialists()) {
-			addSpecialistToQueue();
-		}
-		if (getMinerals() > 22) {
-			if (countMyAssaults() > countMyRaiders() / 3) {
-				addRaiderToQueue();
-			} else if (countMyUnits() / 3 < countMySupports()) {
-				addSupportToQueue();
-			} else {
-				addAssaultToQueue();
-			}
-		}
-		// altRight
-		if (Utility.distance(getMyBase(), getEnemyBase()) < 1000) {
-			addAssaultToQueue();
-		}
+		addRaiderToQueue();
+//		if (countEnemyRaiders() > countMyAssaults() * 3) {
+//			addAssaultToQueue();
+//		}
+//		if (countEnemySpecialists() > countMyRaiders() / 3) {
+//			addRaiderToQueue();
+//		}
+//		if (countEnemyAssaults() > countMySpecialists()) {
+//			addSpecialistToQueue();
+//		}
+//		if (getMinerals() > 22) {
+//			if (countMyAssaults() > countMyRaiders() / 3) {
+//				addRaiderToQueue();
+//			} else if (countMyUnits() / 3 < countMySupports()) {
+//				addSupportToQueue();
+//			} else {
+//				addAssaultToQueue();
+//			}
+//		}
+//		// altRight
+//		if (Utility.distance(getMyBase(), getEnemyBase()) < 1000) {
+//			addAssaultToQueue();
+//		}
 
 	}
 
@@ -112,7 +113,23 @@ public class Fs extends Player {
 		Color c = new Color(255, 0, 0);
 		g.setColor(c);
 
-		// g.fillOval(0,0,500,500);
+		float totalX = 0;
+		float totalY = 0;
+
+		int averageY = 0;
+		int averageX = 0;
+
+		ArrayList<Unit> units = getEnemyUnitsExclude(Miner.class);
+
+		for (Unit u : units) {
+			totalX += u.getCenterX();
+			totalY += u.getCenterY();
+
+			averageX = (int) (totalX / units.size());
+			averageY = (int) (totalY / units.size());
+		}
+
+		g.fillOval(averageX, averageY, 500, 500);
 
 		if (getMostVulerableEnemy(Miner.class) != null) {
 
@@ -163,75 +180,66 @@ public class Fs extends Player {
 
 	public Unit getMostVulerableEnemy(Class<? extends Unit> clazz) {
 
-		int maxEnemies = 100;
 		Unit bestUnit = null;
 
-		if (getEnemyUnits().isEmpty()) {
+		if (getEnemyUnits().isEmpty() || getEnemyUnitsExclude(Miner.class).isEmpty()) {
 			return null;
 		}
-		for (Unit u : getEnemyUnits()) {
-			if (clazz.isAssignableFrom(u.getClass())) {
-				if ((u.countEnemiesInRadius(750) - u.getEnemiesInRadius(750, Miner.class).size()) < maxEnemies) {
-					bestUnit = u;
-					maxEnemies = u.countEnemiesInRadius(750) - u.getEnemiesInRadius(750, Miner.class).size();
-				}
-			}
-		}
-		
-		ArrayList <Unit> units = getEnemyUnitsExclude(Miner.class);
-		
+
+		ArrayList<Unit> units = getEnemyUnitsExclude(Miner.class);
+
 		float totalX = 0;
 		float totalY = 0;
-		
-		for(Unit u: units) {
+
+		int averageY = 0;
+		int averageX = 0;
+
+		int maxDistance = 0;
+
+		for (Unit u : units) {
 			totalX += u.getCenterX();
 			totalY += u.getCenterY();
-			
-			int averageX = (int) (totalX / units.size());
-			int averageY = (int) (totalY / units.size());
+
+			averageX = (int) (totalX / units.size());
+			averageY = (int) (totalY / units.size());
 		}
-		
-		
-		
-		for (Unit u : getEnemyUnits()) {
-			if (clazz.isAssignableFrom(u.getClass())) {
-				if ((u.countEnemiesInRadius(750) - u.getEnemiesInRadius(750, Miner.class).size()) < maxEnemies) {
-					bestUnit = u;
-					maxEnemies = u.countEnemiesInRadius(750) - u.getEnemiesInRadius(750, Miner.class).size();
-				}
+
+		for (Unit u : getEnemyUnits(clazz)) {
+			if (u.getDistance(averageX, averageY) > maxDistance
+					&& (u.countEnemiesInRadius(1200) - u.getEnemiesInRadius(1200, Miner.class).size()) < 2) {
+				maxDistance = (int) u.getDistance(averageX, averageY);
+				bestUnit = u;
 			}
 		}
-		
-		
 		return bestUnit;
 	}
 
 	public ArrayList<Unit> getEnemyUnitsExclude(Class<? extends Unit> clazz) {
 
 		ArrayList<Unit> units = new ArrayList<Unit>();
-		
-		if (clazz != Specialist.class) {
-			for (Unit u : getMyUnits(Specialist.class)) {
+
+		if (clazz != Specialist.class && !getEnemyUnits(Specialist.class).isEmpty()) {
+			for (Unit u : getEnemyUnits(Specialist.class)) {
 				units.add(u);
 			}
 		}
-		if (clazz != Raider.class) {
-			for (Unit u : getMyUnits(Raider.class)) {
+		if (clazz != Raider.class && !getEnemyUnits(Raider.class).isEmpty()) {
+			for (Unit u : getEnemyUnits(Raider.class)) {
 				units.add(u);
 			}
 		}
-		if (clazz != Assault.class) {
-			for (Unit u : getMyUnits(Assault.class)) {
+		if (clazz != Assault.class && !getEnemyUnits(Assault.class).isEmpty()) {
+			for (Unit u : getEnemyUnits(Assault.class)) {
 				units.add(u);
 			}
 		}
-		if (clazz != Support.class) {
-			for (Unit u : getMyUnits(Support.class)) {
+		if (clazz != Support.class && !getEnemyUnits(Support.class).isEmpty()) {
+			for (Unit u : getEnemyUnits(Support.class)) {
 				units.add(u);
 			}
 		}
-		if (clazz != Miner.class) {
-			for (Unit u : getMyUnits(Miner.class)) {
+		if (clazz != Miner.class && !getEnemyUnits(Miner.class).isEmpty()) {
+			for (Unit u : getEnemyUnits(Miner.class)) {
 				units.add(u);
 			}
 		}
