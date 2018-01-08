@@ -26,7 +26,7 @@ import objects.units.Mine;
 import objects.units.Turret;
 import objects.units.Unit;
 import scenario.Scenario;
-import teams.s2.Fs.Fs;
+import teams.s2.Flash.Fs;
 import teams.starter.heavy.Heavy;
 import teams.starter.swarm.Swarm;
 import ui.display.Camera;

@@ -1,4 +1,6 @@
-package teams.s2.Fs;
+package teams.s2.Flash;
+
+import java.util.ArrayList;
 
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -13,37 +15,36 @@ import objects.units.Unit;
 public class FsSupport extends Support {
 	Fs p;
 
+
 	public FsSupport(Fs p) throws SlickException {
 		super(p);
 		this.p = p;
 	}
 
 	/***************** Action Method ***************/
-	
+
 	public void action() {
-		
 		// This method is called every frame, BEFORE the relevant order method is called
-		
+		ArrayList<Unit> Units = getOwner().getMyUnits();
 		Unit u = nearestAllyExclude(Support.class);
-		if(!(u instanceof Miner)&&!(u instanceof Support)) {
-		moveTo(u);
-		}else {
-			if(nearestAlly(Specialist.class)!=null) {
-			moveTo(nearestAlly(Specialist.class));
-			}else if(nearestAlly(Assault.class)!=null) {
-				moveTo(nearestAlly(Assault.class));
-			}else if(nearestAlly(Raider.class)!=null) {
-				moveTo(nearestAlly(Raider.class));
-			}else {
-				moveTo(getHomeBase());
+		for (int i = 0; i < Units.size(); i++) {
+			if (canHeal(Units.get(i))&&(Units.get(i).getCurHealth()/Units.get(i).getMaxHealth())<(u.getCurHealth()/u.getMaxHealth())) {
+				u = Units.get(i);
+			}
+		}
+
+		if (getDistance(u) < 200) {
+			moveTo(getHomeBase());
+		} else {
+			if (!(u instanceof Miner)) {
+				moveTo(u.getX(), u.getY());
 			}
 		}
 		if (u != null && u.isDamaged()) {
 			shoot(u);
 		}
-
 	}
-	
+
 	/***************** Order Methods ***************/
 
 	protected void attack() {
@@ -75,11 +76,13 @@ public class FsSupport extends Support {
 	}
 
 	/***************** DRAW Methods ***************/
-	
+
 	public void draw(Graphics g) {
 
-		// This method allows you to draw things on the screen.  It's only visible if you enable  
-		// that player's drawings.  Press 'q' to enable drawings for BLUE and 'e' for RED.
+		// This method allows you to draw things on the screen. It's only visible if you
+		// enable
+		// that player's drawings. Press 'q' to enable drawings for BLUE and 'e' for
+		// RED.
 	}
 
 }

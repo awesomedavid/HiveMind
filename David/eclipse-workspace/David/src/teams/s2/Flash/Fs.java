@@ -1,4 +1,4 @@
-package teams.s2.Fs;
+package teams.s2.Flash;
 
 import java.util.ArrayList;
 
@@ -31,10 +31,9 @@ import objects.upgrades.SpecialistRift;
 import objects.upgrades.SupportEnergy;
 import objects.upgrades.SupportFix;
 import scenario.Scenario;
-import teams.s2.Fs.Extras.MiningAsteroid;
-import teams.s2.Fs.Extras.MiningManager;
-import teams.s2.Fs.Extras.Squadron;
-import teams.s2.Fs.Miners.FsMiner;
+import teams.s2.Flash.Extras.MiningAsteroid;
+import teams.s2.Flash.Extras.MiningManager;
+import teams.s2.Flash.Extras.Squadron;
 import weapons.RaiderAttack;
 
 public class Fs extends Player {
@@ -58,44 +57,46 @@ public class Fs extends Player {
 	/**************** Action Method ****************/
 
 	public void action() throws SlickException {
-		setMessageOne("hi"+countMySupports());
+		setMessageOne("NumSup "+countMySupports());
+		setMessageTwo(";)");
 		if (Game.getTime() == 1) {
 			initializeExtras();
 		}
+		
 		if (countMyMiners() < 2) {
 			addMinerToQueue();
 		}
-		if (countEnemyMiners() > countMyMiners()) {
+		if ((countEnemyMiners()-countNeutralMiners()) > countMyMiners()) {
 			addMinerToQueue();
 		}
 		beginResearch(MinerHull.class);
-		if (countEnemyRaiders() > countMyAssaults() * 3) {
+		if ((countEnemyRaiders()-countNeutralRaiders()) > countMyAssaults() * 3) {
 			addAssaultToQueue();
 		}
 		beginResearch(AssaultShield.class);
-		if (countEnemySpecialists() > countMyRaiders() / 3) {
+		if ((countEnemySpecialists()-countNeutralSpecialists()) > countMyRaiders() / 3) {
 			addRaiderToQueue();
 		}
 		beginResearch(RaiderPierce.class);
-		if (countEnemyAssaults() > countMySpecialists()) {
+		if ((countEnemyAssaults()-countNeutralAssaults()) > countMySpecialists()) {
 			addSpecialistToQueue();
 		}
 		beginResearch(SpecialistReactor.class);	
 		beginResearch(AssaultAegis.class);
 		beginResearch(MinerMine.class);
-		if (getMinerals()> 22) {
-			if(countMyAssaults() > countMyRaiders()/3) {
-				addRaiderToQueue();						
-			}else if(countMyUnits()/3>countMySupports()) {
-				addSupportToQueue();
-			}else {
+		if (getMinerals()> 25) {			
+			if(countMyUnits()/3>countMySupports()) {
+				addSupportToQueue();							
+			}else if(countMyAssaults() < countMyRaiders()/3) {
 				addAssaultToQueue();
+			}else {
+				addRaiderToQueue();
 			}
 		}
-		// altRight
-		if (Utility.distance(getMyBase(), getEnemyBase()) < 1000) {
-			addAssaultToQueue();
-		}
+		
+//		if (getMyBase().getDistance(getEnemyBase())<1000) {
+//			addAssaultToQueue();
+//		}
 
 	}
 

@@ -1,4 +1,4 @@
-package teams.s2.Fs;
+package teams.s2.Flash;
 
 import java.util.ArrayList;
 
@@ -14,12 +14,10 @@ import objects.units.Specialist;
 import objects.units.Support;
 import objects.units.Unit;
 
-public class FsAssault extends Assault {
+public class FsSpecialist extends Specialist {
 	Fs p;
 
-	/***************** Constructor ***************/
-	
-	public FsAssault(Fs p) throws SlickException {
+	public FsSpecialist(Fs p) throws SlickException {
 		super(p);
 		this.p = p;
 	}
@@ -28,57 +26,89 @@ public class FsAssault extends Assault {
 	
 	public void action() {
 		Unit e = nearestEnemy();
-		ArrayList<Unit> r = getEnemiesInRadius(700);
-		if(e instanceof BaseShip && Utility.distance(getHomeBase(),getEnemyBase())<1000) {
+		Unit mvm = nearestAlly(Miner.class);
+		int index = 0;
+		ArrayList<Unit> miners = getOwner().getMyUnits(Miner.class);
+
+		for (int i = 0; i < miners.size(); i++) {
+			
+			if (miners.get(i).getDistance(e) < miners.get(index).getDistance(e)) {
+				
+				mvm = miners.get(i);
+				index = i;
+			}
+		}
+		if(e instanceof BaseShip && getHomeBase().getDistance(getEnemyBase())<1000) {
 			moveTo(e);
 			shoot(e);
 		}
 		if(e instanceof BaseShip) {
-			if(nearestAlly(Miner.class)!=null) {
-				moveTo(nearestAlly(Miner.class));
-			}else {
-				moveTo(getHomeBase());
-			}	
+			circle(mvm);
 			shoot(e);
 		}
-		if(e instanceof Assault) {			
-			moveTo(e);
+		if(e instanceof Assault) {
+			if(getDistance(e)<1000) {
+				turnTo(e);
+				move(180);
+			}
+			moveTo(e);			
 			shoot(e);
 		}
 		if(e instanceof Raider) {
-			moveTo(e);
-			shoot(e);
-		}
-		if(e instanceof Specialist) {
-			if(nearestAlly(Miner.class)!= null) 
-			moveTo(nearestAlly(Miner.class));
+			if(nearestAlly(Assault.class)!=null)
+			circle(nearestAlly(Assault.class));
 			else if(nearestAlly(Raider.class)!=null)
-			moveTo(nearestAlly(Raider.class));
-			else if(nearestAlly(Specialist.class)!=null)
-			moveTo(nearestAlly(Specialist.class));
+			circle(nearestAlly(Raider.class));
 			else
 			moveTo(getHomeBase());
 			shoot(e);
 		}
+		if(e instanceof Specialist) {
+			if(getDistance(e)<1000) {
+				turnTo(e);
+				move(180);
+			}
+			moveTo(e);			
+			shoot(e);
+		}
 		if(e instanceof Miner){
-			moveTo(e);
+			if(getDistance(e)<1000) {
+				turnTo(e);
+				move(180);
+			}
+			moveTo(e);			
 			shoot(e);
 		}
 		if(e instanceof Support) {
-			moveTo(e);
+			if(getDistance(e)<1000) {
+				turnTo(e);
+				move(180);
+			}
+			moveTo(e);			
 			shoot(e);
 		}
 		if(getOwner().countEnemyUnits()<=0 || e == null) {
 			moveTo(getEnemyBase());
 			shoot(getEnemyBase());
 		}
+		
 
 	}
-	
+	void circle(Unit u) {
+		if (getDistance(u) > 180) {
+			moveTo(u);
+		}else if(getDistance(u)<80) {
+			turnTo(u);
+			move(180);
+		}else if(getDistance(u)<160){
+			turnTo(u);
+			move(((int) this.getAngleToward(this.getHomeBase().getCenterX(), this.getHomeBase().getCenterY())) + 130);
+		}
+	}
 	/***************** Order Methods ***************/
 
 	protected void attack() {
-		// This method is called every frame while the unit's order is set to ATTACK
+		
 	}
 
 	protected void defend() {
@@ -112,4 +142,5 @@ public class FsAssault extends Assault {
 		// This method allows you to draw things on the screen.  It's only visible if you enable  
 		// that player's drawings.  Press 'q' to enable drawings for BLUE and 'e' for RED.
 	}
+
 }

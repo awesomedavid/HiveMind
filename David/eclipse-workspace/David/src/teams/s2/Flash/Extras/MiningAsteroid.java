@@ -1,4 +1,4 @@
-package teams.s2.Fs.Extras;
+package teams.s2.Flash.Extras;
 
 import org.newdawn.slick.SlickException;
 

@@ -1,4 +1,4 @@
-package teams.s2.Fs.Extras;
+package teams.s2.Flash.Extras;
 
 import java.util.ArrayList;
 
@@ -10,8 +10,8 @@ import objects.units.Assault;
 import objects.units.Raider;
 import objects.units.Specialist;
 import objects.units.Unit;
-import teams.s2.Fs.Fs;
-import teams.s2.Fs.FsRaider;
+import teams.s2.Flash.Fs;
+import teams.s2.Flash.FsRaider;
 import teams.starter.swarm.Swarm;
 
 public class Squadron {

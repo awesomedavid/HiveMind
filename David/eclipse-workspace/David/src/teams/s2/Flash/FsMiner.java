@@ -1,15 +1,15 @@
-package teams.s2.Fs.Miners;
+package teams.s2.Flash;
+
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
 import core.Utility;
 import objects.units.Miner;
 import objects.units.Unit;
-import teams.s2.Fs.Fs;
-import teams.s2.Fs.Extras.HighYieldMiningAsteroid;
-import teams.s2.Fs.Extras.MiningAsteroid;
+import teams.s2.Flash.Extras.HighYieldMiningAsteroid;
+import teams.s2.Flash.Extras.MiningAsteroid;
 
-public class MinerMine extends Miner {
+public class FsMiner extends Miner {
 
 	Fs p;
 
@@ -22,7 +22,7 @@ public class MinerMine extends Miner {
 
 	/***************** Constructor ***************/
 
-	public MinerMine(Fs p) throws SlickException {
+	public FsMiner(Fs p) throws SlickException {
 		super(p);
 		this.p = p;
 	}
@@ -34,7 +34,7 @@ public class MinerMine extends Miner {
 		// This method is called every frame, BEFORE the order method is called
 		Unit e = nearestEnemy();
 			
-		if (getDistance(e) < 1055) {
+		if (getDistance(e) < 1155) {
 			stopMine();
 			moveTo(getHomeBase());
 		} else {
