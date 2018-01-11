@@ -1,4 +1,4 @@
-package teams.s2.basic.Extras.MiningStuff;
+package teams.s2.Fs.Extras;
 
 import org.newdawn.slick.SlickException;
 
