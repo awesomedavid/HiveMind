@@ -39,7 +39,7 @@ public class FsAssault extends Assault {
 				index = i;
 			}
 		}
-		if (getCurHealth() / getMaxHealth() < .1) {
+		if (getCurHealth() / getMaxHealth() < .25) {
 			ability();
 		}
 		if (Game.getTime() / 80 < 80) {
@@ -63,6 +63,7 @@ public class FsAssault extends Assault {
 				shoot(e);
 			}
 			if (e instanceof Specialist) {
+
 				if (hasDamageReduction()) {
 					circle(e);
 					shoot(e);
@@ -79,44 +80,37 @@ public class FsAssault extends Assault {
 					else
 						moveTo(getHomeBase());
 					shoot(e);
-				}
-			}
-			if (e instanceof Miner) {
-				circle(e);
-				shoot(e);
-			}
 
-			if (e instanceof Support) {
-				if (e.getDistance(getEnemyBase()) < 500) {
-					if (nearestAlly(Specialist.class) != null) {
-						circle(nearestAlly(Specialist.class));
-						shoot(e);
-					} else if (nearestAlly(Assault.class) != null) {
-						circle(nearestAlly(Assault.class));
-						shoot(e);
-					} else {
-						if (mvm != null) {
-							circle(mvm);
-							shoot(e);
-						}
+					if (getDistance(e) < 1055) {
+						ability();
+
 					}
-				} else {
-					moveTo(e);
+				}
+				if (e instanceof Miner) {
+					circle(e);
 					shoot(e);
 				}
-			}
-		}
-	}
 
-	void circle(Unit u) {
-		if (getDistance(u) > 180) {
-			moveTo(u);
-		} else if (getDistance(u) < 80) {
-			turnTo(u);
-			move(180);
-		} else if (getDistance(u) < 160) {
-			turnTo(u);
-			move(((int) this.getAngleToward(this.getHomeBase().getCenterX(), this.getHomeBase().getCenterY())) + 130);
+				if (e instanceof Support) {
+					if (e.getDistance(getEnemyBase()) < 500) {
+						if (nearestAlly(Specialist.class) != null) {
+							circle(nearestAlly(Specialist.class));
+							shoot(e);
+						} else if (nearestAlly(Assault.class) != null) {
+							circle(nearestAlly(Assault.class));
+							shoot(e);
+						} else {
+							if (mvm != null) {
+								circle(mvm);
+								shoot(e);
+							}
+						}
+					} else {
+						moveTo(e);
+						shoot(e);
+					}
+				}
+			}
 		}
 	}
 
@@ -158,5 +152,20 @@ public class FsAssault extends Assault {
 		// enable
 		// that player's drawings. Press 'q' to enable drawings for BLUE and 'e' for
 		// RED.
+	}
+
+	public void circle(Unit u) {
+
+		int angle = 0;
+
+		angle = (22 - (int) (getDistance(u) * getDistance(u)) / 3000);
+
+		if (angle < 12) {
+			angle = 12;
+		}
+
+		turnTo(u);
+		move((int) getAngleToward(u.getCenterX(), u.getCenterY()) + angle);
+
 	}
 }

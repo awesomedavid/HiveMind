@@ -161,16 +161,19 @@ public class FsRaider extends Raider {
 		}
 	}
 
-	void circle(Unit u) {
-		if (getDistance(u) > 180) {
-			moveTo(u);
-		} else if (getDistance(u) < 80) {
-			turnTo(u);
-			move(180);
-		} else if (getDistance(u) < 160) {
-			turnTo(u);
-			move(((int) this.getAngleToward(this.getHomeBase().getCenterX(), this.getHomeBase().getCenterY())) + 100);
+	public void circle(Unit u) {
+
+		int angle = 0;
+
+		angle = (22 - (int) (getDistance(u) * getDistance(u)) / 3000);
+
+		if (angle < 12) {
+			angle = 12;
 		}
+
+		turnTo(u);
+		move((int) getAngleToward(u.getCenterX(), u.getCenterY()) + angle);
+
 	}
 
 	/***************** Order Methods ***************/

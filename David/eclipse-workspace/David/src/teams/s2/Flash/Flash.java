@@ -113,7 +113,37 @@ public class Flash extends Player {
 		// that player's drawings. Press 'q' to enable drawings for BLUE and 'e' for
 		// RED.
 	}
+	public ArrayList<Unit> getEnemyUnitsExclude(Class<? extends Unit> clazz) {
 
+		ArrayList<Unit> units = new ArrayList<Unit>();
+
+		if (clazz != Specialist.class && !getEnemyUnits(Specialist.class).isEmpty()) {
+			for (Unit u : getEnemyUnits(Specialist.class)) {
+				units.add(u);
+			}
+		}
+		if (clazz != Raider.class && !getEnemyUnits(Raider.class).isEmpty()) {
+			for (Unit u : getEnemyUnits(Raider.class)) {
+				units.add(u);
+			}
+		}
+		if (clazz != Assault.class && !getEnemyUnits(Assault.class).isEmpty()) {
+			for (Unit u : getEnemyUnits(Assault.class)) {
+				units.add(u);
+			}
+		}
+		if (clazz != Support.class && !getEnemyUnits(Support.class).isEmpty()) {
+			for (Unit u : getEnemyUnits(Support.class)) {
+				units.add(u);
+			}
+		}
+		if (clazz != Miner.class && !getEnemyUnits(Miner.class).isEmpty()) {
+			for (Unit u : getEnemyUnits(Miner.class)) {
+				units.add(u);
+			}
+		}
+		return units;
+	}
 	/*****************
 	 * Build Methods ***************\
 	 * 
