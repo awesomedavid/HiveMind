@@ -79,6 +79,19 @@ public class FsRaider extends Raider {
 		// shoot(getEnemyBase());
 		// }
 		// }
+
+		setOrder(Order.DEFEND);
+
+		shoot(e);
+
+	}
+
+	/***************** Order Methods ***************/
+
+	protected void attack() {
+		// This method is called every frame while the unit's order is set to ATTACK
+		Unit e = nearestEnemy();
+
 		if (p.countEnemyUnits() - p.countEnemyMiners() > 5) {
 			if (getDistance(e) < 2000 && p.countEnemyMiners() > 0) {
 				if (e instanceof Miner) {
@@ -101,18 +114,12 @@ public class FsRaider extends Raider {
 				moveTo(getHomeBase());
 			}
 		}
-		shoot(e);
-
-	}
-
-	/***************** Order Methods ***************/
-
-	protected void attack() {
-		// This method is called every frame while the unit's order is set to ATTACK
 	}
 
 	protected void defend() {
 		// This method is called every frame while the unit's order is set to DEFEND
+		
+
 	}
 
 	protected void guard() {
