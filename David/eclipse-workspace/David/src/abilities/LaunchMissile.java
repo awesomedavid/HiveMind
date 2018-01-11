@@ -8,8 +8,8 @@ import objects.units.Unit;
 
 public class LaunchMissile extends Ability 
 {
-	final int RESTOCK_TIME = 750;
-	int restockTimer = RESTOCK_TIME;
+
+	int restockTimer = Values.RAIDER_UPGRADE_MISSILE_RESTOCK_TIME;
 
 	public LaunchMissile(Unit owner)
 	{
@@ -40,12 +40,12 @@ public class LaunchMissile extends Ability
 			return;
 		}
 		
-		if(restockTimer < RESTOCK_TIME && nearBase())
+		if(restockTimer < Values.RAIDER_UPGRADE_MISSILE_RESTOCK_TIME && nearBase())
 		{
 			restockTimer++;
 		}
 		
-		if(restockTimer == RESTOCK_TIME)
+		if(restockTimer == Values.RAIDER_UPGRADE_MISSILE_RESTOCK_TIME)
 		{
 			charges++;
 			restockTimer = 0;
@@ -55,7 +55,7 @@ public class LaunchMissile extends Ability
 	
 	public float getRestockProgress()
 	{
-		return (float) restockTimer / (float) RESTOCK_TIME;
+		return (float) restockTimer / (float) Values.RAIDER_UPGRADE_MISSILE_RESTOCK_TIME;
 	}
 	
 	public boolean nearBase()

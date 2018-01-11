@@ -36,14 +36,14 @@ import teams.s2.Flash.Extras.MiningManager;
 import teams.s2.Flash.Extras.Squadron;
 import weapons.RaiderAttack;
 
-public class Fs extends Player {
+public class Flash extends Player {
 	private static MiningManager miningManager;
 
 	private ArrayList<Squadron> squadrons;
 
 	/**************** Constructor ****************/
 
-	public Fs(int team, Game g) throws SlickException {
+	public Flash(int team, Game g) throws SlickException {
 		super(team, g);
 		setName("FlashStick");
 		loadImageSet("classic");
@@ -62,30 +62,34 @@ public class Fs extends Player {
 		if (Game.getTime() == 1) {
 			initializeExtras();
 		}
-		
+		beginResearch(AssaultAegis.class);
+		beginResearch(MinerLaser.class);				
+		beginResearch(RaiderPierce.class);
+		beginResearch(MinerHull.class);
+		beginResearch(AssaultShield.class);		
+		beginResearch(SpecialistReactor.class);			
+		beginResearch(SupportEnergy.class);
+		beginResearch(RaiderEngine.class);
+		beginResearch(SpecialistKinetic.class);
+		beginResearch(SupportFix.class);
+		beginResearch(AssaultExplosive.class);
 		if (countMyMiners() < 2) {
 			addMinerToQueue();
 		}
 		if ((countEnemyMiners()-countNeutralMiners()) > countMyMiners()) {
 			addMinerToQueue();
 		}
-		beginResearch(MinerHull.class);
 		if ((countEnemyRaiders()-countNeutralRaiders()) > countMyAssaults() * 3) {
 			addAssaultToQueue();
-		}
-		beginResearch(AssaultShield.class);
+		}		
 		if ((countEnemySpecialists()-countNeutralSpecialists()) > countMyRaiders() / 3) {
 			addRaiderToQueue();
-		}
-		beginResearch(RaiderPierce.class);
+		}	
 		if ((countEnemyAssaults()-countNeutralAssaults()) > countMySpecialists()) {
 			addSpecialistToQueue();
 		}
-		beginResearch(SpecialistReactor.class);	
-		beginResearch(AssaultAegis.class);
-		beginResearch(MinerMine.class);
 		if (getMinerals()> 25) {			
-			if(countMyUnits()/3>countMySupports()) {
+			if((countMyUnits()-countMyMiners())/4>countMySupports()) {
 				addSupportToQueue();							
 			}else if(countMyAssaults() < countMyRaiders()/3) {
 				addAssaultToQueue();
@@ -156,6 +160,6 @@ public class Fs extends Player {
 	}
 
 	public static void setMiningManager(MiningManager miningManager) {
-		Fs.miningManager = miningManager;
+		Flash.miningManager = miningManager;
 	}
 }

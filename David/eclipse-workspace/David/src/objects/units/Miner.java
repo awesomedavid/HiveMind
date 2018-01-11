@@ -57,7 +57,7 @@ public abstract class Miner extends Unit {
 		acceleration = Values.MINER_ACCELERATION;
 		capacity = Values.MINER_CAPACITY;
 		value = Values.MINER_COST;
-		combatValue = value;
+		combatValue = 0;
 		curArmor = Values.MINER_ARMOR;
 		baseArmor = Values.MINER_ARMOR;
 		mining = false;
@@ -226,7 +226,7 @@ public abstract class Miner extends Unit {
 				load += rate;
 
 			target.extractMinerals(rate);
-
+			
 			if (timer % 30 <= 15) {
 				image = sheet.getSprite(2, team);
 			}

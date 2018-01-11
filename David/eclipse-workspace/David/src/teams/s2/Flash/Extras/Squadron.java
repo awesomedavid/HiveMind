@@ -10,7 +10,7 @@ import objects.units.Assault;
 import objects.units.Raider;
 import objects.units.Specialist;
 import objects.units.Unit;
-import teams.s2.Flash.Fs;
+import teams.s2.Flash.Flash;
 import teams.s2.Flash.FsRaider;
 import teams.starter.swarm.Swarm;
 
@@ -19,11 +19,11 @@ public class Squadron {
 	private final static int SQUAD_ASSAULT_NUM = 2;
 	private final static int SQUAD_SPECIALIST_NUM = 1;
 
-	Fs p;
+	Flash p;
 
 	private ArrayList<Unit> units;
 
-	public Squadron(Fs p) throws SlickException {
+	public Squadron(Flash p) throws SlickException {
 
 		this.p = p;
 		units = new ArrayList<Unit>();

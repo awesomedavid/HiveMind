@@ -1,52 +1,34 @@
-package teams.s2.Flash;
-
-import java.util.ArrayList;
+package teams.s2.basic;
 
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
 import objects.units.Assault;
-import objects.units.Miner;
-import objects.units.Raider;
-import objects.units.Specialist;
-import objects.units.Support;
 import objects.units.Unit;
 
-public class FsSupport extends Support {
-	Flash p;
+public class BasicAssault extends Assault {
+	Basic p;
 
-
-	public FsSupport(Flash p) throws SlickException {
+	/***************** Constructor ***************/
+	
+	public BasicAssault(Basic p) throws SlickException {
 		super(p);
 		this.p = p;
 	}
 
 	/***************** Action Method ***************/
-
+	
 	public void action() {
-		// This method is called every frame, BEFORE the relevant order method is called
-		ArrayList<Unit> Units = getOwner().getMyUnits();
-		Unit u = nearestAllyExclude(Support.class);
-		for (int i = 0; i < Units.size(); i++) {
-			if (canHeal(Units.get(i))&&(Units.get(i).getCurHealth()/Units.get(i).getMaxHealth())<(u.getCurHealth()/u.getMaxHealth())) {
-				u = Units.get(i);
-			}
-		}
+		
+		// This method is called every frame, BEFORE the order method is called
+		
+		Unit a = nearestEnemy();
 
-		if (getDistance(u) < 200) {
-			moveTo(getHomeBase());
-		} else {
-			if (!(u instanceof Miner)) {
-				moveTo(u.getX(), u.getY());
-			}else {
-				moveTo(getHomeBase());
-			}
-		}
-		if (u != null && u.isDamaged()) {
-			shoot(u);
-		}
+		moveTo(a);
+		shoot(a);
+
 	}
-
+	
 	/***************** Order Methods ***************/
 
 	protected void attack() {
@@ -78,13 +60,10 @@ public class FsSupport extends Support {
 	}
 
 	/***************** DRAW Methods ***************/
-
+	
 	public void draw(Graphics g) {
 
-		// This method allows you to draw things on the screen. It's only visible if you
-		// enable
-		// that player's drawings. Press 'q' to enable drawings for BLUE and 'e' for
-		// RED.
+		// This method allows you to draw things on the screen.  It's only visible if you enable  
+		// that player's drawings.  Press 'q' to enable drawings for BLUE and 'e' for RED.
 	}
-
 }

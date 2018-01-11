@@ -187,6 +187,10 @@ public abstract class Unit extends GameObject implements Values {
 	public boolean isCombusted() {
 		return isCombusted;
 	}
+	
+	public boolean isDocked()	{
+		return docked;
+	}
 
 	public boolean hasDamageReduction() {
 		return damageReduction > 0;
@@ -196,6 +200,11 @@ public abstract class Unit extends GameObject implements Values {
 		return damageReduction;
 	}
 
+	public float getAcceleration()
+	{
+		return acceleration;
+	}
+	
 	public boolean hasShield() {
 		return maxShield > 0;
 	}
@@ -733,6 +742,8 @@ public abstract class Unit extends GameObject implements Values {
 
 	public void addMinerals(float amount) {
 		p.addMinerals(amount);
+		p.advanceResearch((int) (amount * RESEARCH_POINT_PER_MINERAL_MINED));
+		
 	}
 
 	public boolean hasEnergy(float amount) {
@@ -1287,9 +1298,9 @@ public abstract class Unit extends GameObject implements Values {
 		else
 			accelerate(acceleration);
 
-			image = sheet.getSprite(1, team);
+		image = sheet.getSprite(1, team);
 		
-		
+	
 
 		canMove = false;
 
@@ -1300,7 +1311,6 @@ public abstract class Unit extends GameObject implements Values {
 			return;
 
 		changeSpeed(amount, theta);
-
 	}
 
 	public final void changeSpeed(float amount, float theta) {
@@ -1493,6 +1503,7 @@ public abstract class Unit extends GameObject implements Values {
 
 	}
 	
+
 	public void launch()
 	{
 		if(onBase() && docked)
@@ -1535,6 +1546,12 @@ public abstract class Unit extends GameObject implements Values {
 		{
 			lastHitter.advanceResearch(value * Values.RESEARCH_POINT_PER_UNIT_COST);
 		}
+		
+		if(this == Game.getBaseShip(NEUTRAL_ID))
+		{
+			lastHitter.addMinerals(NEUTRAL_BASE_MINERAL_REWARD);
+		}
+		
 		Game.addAnimation(new Boom(getCenterX(), getCenterY(), w / Boom.BOOM_SIZE));
 		
 		Audio.playBoom(getPosition(), (float) (1.2f - .05 * this.value), this.value / 10f);

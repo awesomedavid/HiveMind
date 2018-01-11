@@ -24,6 +24,7 @@ public class Audio
 
 	private static ArrayList<Song> songs;
 	private static ArrayList<Song> special;
+	private static ArrayList<Song> hidden;
 	private static Song gameMusic;
 	
 	public static void playBlast(Point location)
@@ -118,7 +119,12 @@ public class Audio
 		special.add(new Song("Rick Astley", "Never Gonna Give You Up", path + "never_gonna_give_you_up.ogg", true));
 		special.add(new Song("The Bee Gees", "Stayin' Alive", path + "stayin_alive.ogg", true));
 		special.add(new Song("Darude", "Sandstorm", path + "sandstorm.ogg", true));
-		special.add(new Song("Trans-Siberian Orchestra", "Christmas Eve", path + "chirstmas_eve.ogg", true));
+		
+		hidden = new ArrayList<Song>();
+		path = "res/music/hidden/";
+		
+		hidden.add(new Song("Darude", "Sandstorm (Potato Cover)", path + "potato.ogg", true));
+		hidden.add(new Song("Trans-Siberian Orchestra", "Christmas Eve", path + "christmas_eve.ogg", true));
 		
 		setRandomGameMusic();
 	}
@@ -126,7 +132,11 @@ public class Audio
 	public static void setRandomGameMusic() throws SlickException
 	{
 
-		if(Math.random() < Values.MUSIC_SECRET_CHANCE)
+		if(Math.random() < Values.MUSIC_HIDDEN_CHANCE)
+		{
+			gameMusic = Audio.hidden.get(Utility.random(0, Audio.hidden.size()-1));
+		}
+		else if(Math.random() < Values.MUSIC_SPECIAL_CHANCE)
 		{
 			gameMusic = Audio.special.get(Utility.random(0, Audio.special.size()-1));
 		}

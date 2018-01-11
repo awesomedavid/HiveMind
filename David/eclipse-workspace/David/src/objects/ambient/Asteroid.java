@@ -158,7 +158,8 @@ public class Asteroid extends Ambient
 	}
 
 	public static boolean isValidSpawn(int x, int y) {
-		return !isSpawnNearBaseShip(x, y, Game.getBaseShip(Values.BLUE_ID)) && !isSpawnNearBaseShip(x, y, Game.getBaseShip(Values.RED_ID));
+		return !isSpawnNearBaseShip(x, y, Game.getBaseShip(Values.BLUE_ID)) && 
+				!isSpawnNearBaseShip(x, y, Game.getBaseShip(Values.RED_ID));
 	}
 
 	public static boolean isSpawnNearBaseShip(int xPos, int yPos, BaseShip b) {

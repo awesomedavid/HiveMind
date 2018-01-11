@@ -26,7 +26,7 @@ import objects.units.Mine;
 import objects.units.Turret;
 import objects.units.Unit;
 import scenario.Scenario;
-import teams.s2.Flash.Fs;
+import teams.s2.Flash.Flash;
 import teams.starter.heavy.Heavy;
 import teams.starter.swarm.Swarm;
 import ui.display.Camera;
@@ -37,14 +37,14 @@ import ui.sound.Audio;
 public class Game extends BasicGameState 
 {
 	// Common game setting toggles
-	public static boolean infoMode = false;		// Displays additional information in the UI.  Press 'i' to toggle in game
-	public static boolean sfxOn = true;		// Enable sound effects
+	public static boolean infoMode = true;		// Displays additional information in the UI.  Press 'i' to toggle in game
+	public static boolean sfxOn = true;		    // Enable sound effects
 	public static boolean musicOn = true;		// Enables music.  Press 'm' to cycle track in game.
 	public static boolean basicMode = false;	// Hides complicated events, such as Solar Flares and Pirates
 	
-	// Player setup
+	// Player setup4
 	private void setPlayers() throws SlickException {
-		playerOne = new Fs(Values.BLUE_ID, this);
+		playerOne = new Flash(Values.BLUE_ID, this);
 		playerOne.setDifficultyRating(1);			
 		
 		playerTwo = new Heavy(Values.RED_ID, this);
@@ -441,6 +441,14 @@ public class Game extends BasicGameState
 		screenCenterX = (float) (Values.RESOLUTION_X / Camera.getZoom() / 2 - Camera.getX());
 		screenCenterY = (float) (Values.RESOLUTION_Y / Camera.getZoom() / 2 - Camera.getY());
 
+		
+		if(Game.getTime() == 1 && !paused)
+		{
+			units.add(playerOne.buildMiner());
+			units.add(playerOne.buildMiner());
+			units.add(playerTwo.buildMiner());
+			units.add(playerTwo.buildMiner());
+		}
 
 	
 		//gc.setFullscreen(true);
@@ -523,13 +531,7 @@ public class Game extends BasicGameState
 		c.update(gc);
 		display.update(units);
 		
-		if(timer == 1)
-		{
-			units.add(playerOne.buildMiner());
-			units.add(playerOne.buildMiner());
-			units.add(playerTwo.buildMiner());
-			units.add(playerTwo.buildMiner());
-		}
+
 
 	}
 
@@ -555,7 +557,7 @@ public class Game extends BasicGameState
 			gameOver = true;
 			gameOverTimer = 0;
 			gameSpeed = 1;
-			gc.setTargetFrameRate(60);
+			gc.setTargetFrameRate(Values.FRAMES_PER_SECOND/2);
 
 			ArrayList<Unit> units = playerOne.getMyUnits();
 			for (Unit u : units) {
@@ -566,7 +568,7 @@ public class Game extends BasicGameState
 			gameOver = true;
 			gameOverTimer = 0;
 			gameSpeed = 1;
-			gc.setTargetFrameRate(60);
+			gc.setTargetFrameRate(Values.FRAMES_PER_SECOND/2);
 
 			ArrayList<Unit> units = playerTwo.getMyUnits();
 			for (Unit u : units) {
@@ -574,10 +576,10 @@ public class Game extends BasicGameState
 			}
 		}
 
-		if (gameOverTimer == 60) {
+		if (gameOverTimer == Values.FRAMES_PER_SECOND/2) {
 			paused = true;
 			gameOverTimer = 0;
-			gc.setTargetFrameRate(60);
+			gc.setTargetFrameRate(Values.FRAMES_PER_SECOND);
 		} else if (gameOver && !paused) {
 			gameOverTimer++;
 		}

@@ -32,6 +32,7 @@ public class Pulse extends Event {
 		cooldown = Values.PULSAR_PULSE_COOLDOWN;
 		if (strong) {
 			range *= 1.5;
+			effect *= 1.5;
 		}
 		this.player = player;
 	}
@@ -44,10 +45,6 @@ public class Pulse extends Event {
 			float distance = Utility.distance(u, owner);
 			if (distance < range) {
 				int delay = (int) ((distance / range) * Values.PULSAR_PULSE_DURATION);
-
-				if (strong) {
-					effect *= 1.5;
-				}
 
 				u.addEffect(new Stunned(u, player, delay, effect));
 

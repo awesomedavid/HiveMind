@@ -88,10 +88,8 @@ public class Scenario
 		event = new None();
 		unitPack = new ArrayList<Class<? extends Unit>>();
 		
-
 		battle = Battle.getRandom();
 
-		
 		selectNoun();
 		applyAdjective();
 

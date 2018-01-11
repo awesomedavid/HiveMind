@@ -51,9 +51,15 @@ public abstract class Player {
 	private float mineralsMined;
 	private float mineralsLost;
 	private String name;
-	private String message;
+	private String messageOne;
 	private String messageTwo;
 	private String messageThree;
+	private String messageFour;
+	private Color messageOneColor;
+	private Color messageTwoColor;
+	private Color messageThreeColor;
+	private Color messageFourColor;
+
 
 	private int team;
 	private boolean isDefeated;
@@ -147,9 +153,15 @@ public abstract class Player {
 		upgrades = new ArrayList<Upgrade>();
 		timer = 0;
 		name = "Player";
-		message = " ";
+		messageOne = " ";
 		messageTwo = " ";
 		messageThree = " ";
+		messageFour = " ";
+		messageOneColor = Color.white;
+		messageTwoColor = Color.white;
+		messageThreeColor = Color.white;
+		messageFourColor = Color.white;
+		
 		buildQueue = new LinkedList<BuildOrder>();
 		loadImageSet("classic");
 
@@ -239,7 +251,9 @@ public abstract class Player {
 		if (!buildQueue.isEmpty() && buildQueue.peek().time == 0) 
 		{
 			// Hold on spawning the unit if we've hit the unit cap
-			if(getFleetSize() + buildQueue.peek().value <= Values.BASE_UNIT_VALUE_CAP)
+			if(getMyBase() != null && 
+			   getMyBase().isAlive() && 
+			   getFleetSize() + buildQueue.peek().value <= Values.BASE_UNIT_VALUE_CAP)
 			{
 				Class<? extends Unit> type = buildQueue.poll().name;
 				spawnUnit(type);
@@ -565,8 +579,8 @@ public abstract class Player {
 		return name;
 	}
 
-	public String getMessage() {
-		return message;
+	public String getMessageOne() {
+		return messageOne;
 	}
 
 	public String getMessageTwo() {
@@ -577,6 +591,27 @@ public abstract class Player {
 	public String getMessageThree() {
 		return messageThree;
 	}
+	
+	public String getMessageFour() {
+		return messageFour;
+	}
+	
+	public Color getMessageOneColor() {
+		return messageOneColor;
+	}
+		
+	public Color getMessageTwoColor() {
+		return messageTwoColor;
+	}
+	
+	public Color getMessageThreeColor() {
+		return messageThreeColor;
+	}
+
+	public Color getMessageFourColor() {
+		return messageFourColor;
+	}
+
 
 	public int getArmyValue() {
 		return armyValue;
@@ -784,7 +819,7 @@ public abstract class Player {
 	}
 
 	public void setMessageOne(String m) {
-		message = m;
+		messageOne = m;
 	}
 
 	public void setMessageTwo(String m) {
@@ -793,6 +828,23 @@ public abstract class Player {
 	
 	public void setMessageThree(String m) {
 		messageThree = m;
+	}
+	
+	public void setMessageFour(String m) {
+		messageFour = m;
+	}
+
+	public void setMessageOneColor(Color c) {
+		messageOneColor = c;
+	}
+	public void setMessageTwoColor(Color c) {
+		messageTwoColor = c;
+	}	
+	public void setMessageThreeColor(Color c) {
+		messageThreeColor = c;
+	}	
+	public void setMessageFourColor(Color c) {
+		messageFourColor = c;
 	}
 
 	public void addMinerals(float amount) 

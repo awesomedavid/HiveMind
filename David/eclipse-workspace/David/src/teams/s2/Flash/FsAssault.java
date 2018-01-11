@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
+import core.Game;
 import core.Utility;
 import objects.units.Assault;
 import objects.units.BaseShip;
@@ -15,11 +16,11 @@ import objects.units.Support;
 import objects.units.Unit;
 
 public class FsAssault extends Assault {
-	Fs p;
+	Flash p;
 
 	/***************** Constructor ***************/
 
-	public FsAssault(Fs p) throws SlickException {
+	public FsAssault(Flash p) throws SlickException {
 		super(p);
 		this.p = p;
 	}
@@ -38,59 +39,68 @@ public class FsAssault extends Assault {
 				index = i;
 			}
 		}
-		if (e instanceof BaseShip && getHomeBase().getDistance(getEnemyBase())<1000) {
-			moveTo(e);
-			shoot(e);
+		if(getCurHealth()/getMaxHealth()<.1) {
+			ability();
 		}
-		if (e instanceof BaseShip) {
-			circle(mvm);
+		if (Game.getTime() / 80 < 80) {
+			moveTo(mvm);
 			shoot(e);
-		}
-		if (e instanceof Assault) {
-			circle(e);
-			shoot(e);
-		}
-		if (e instanceof Raider) {
-			circle(e);
-			shoot(e);
-		}
-		if (e instanceof Specialist) {
-			if (mvm != null)
-				circle(mvm);
-			else if (nearestAlly(Raider.class) != null)
-				circle(nearestAlly(Raider.class));
-			else if (nearestAlly(Specialist.class) != null)
-				circle(nearestAlly(Specialist.class));
-			else
-				moveTo(getHomeBase());
-			shoot(e);
-		}
-		if (e instanceof Miner) {
-			circle(e);
-			shoot(e);
-		}
-
-		if (e instanceof Support) {
-			if (e.getDistance(getEnemyBase()) < 500) {
-				if (nearestAlly(Specialist.class) != null) {
-					circle(nearestAlly(Specialist.class));
-					shoot(e);
-				} else if (nearestAlly(Assault.class) != null) {
-					circle(nearestAlly(Assault.class));
-					shoot(e);
-				} else {
-					if (mvm != null) {
-						circle(mvm);
-						shoot(e);
-					}
-				}
-			} else {
+		} else {
+			if (e instanceof BaseShip && getHomeBase().getDistance(getEnemyBase()) < 1000) {
 				moveTo(e);
 				shoot(e);
 			}
+			if (e instanceof BaseShip) {
+				circle(mvm);
+				shoot(e);
+			}
+			if (e instanceof Assault) {
+				circle(e);
+				shoot(e);
+			}
+			if (e instanceof Raider) {
+				circle(e);
+				shoot(e);
+			}
+			if (e instanceof Specialist) {
+				if(getDistance(e)<1055) {
+					ability();
+				}
+				if (mvm != null)
+					circle(mvm);
+				else if (nearestAlly(Raider.class) != null)
+					circle(nearestAlly(Raider.class));
+				else if (nearestAlly(Specialist.class) != null)
+					circle(nearestAlly(Specialist.class));
+				else
+					moveTo(getHomeBase());
+				shoot(e);
+			}
+			if (e instanceof Miner) {
+				circle(e);
+				shoot(e);
+			}
+
+			if (e instanceof Support) {
+				if (e.getDistance(getEnemyBase()) < 500) {
+					if (nearestAlly(Specialist.class) != null) {
+						circle(nearestAlly(Specialist.class));
+						shoot(e);
+					} else if (nearestAlly(Assault.class) != null) {
+						circle(nearestAlly(Assault.class));
+						shoot(e);
+					} else {					
+						if (mvm != null) {
+							circle(mvm);
+							shoot(e);
+						}
+					}
+				} else {
+					moveTo(e);
+					shoot(e);
+				}
+			}
 		}
-
-
 	}
 
 	void circle(Unit u) {

@@ -291,24 +291,38 @@ public class Display implements Values {
 			len = fontName.getWidth(one.getName());
 			g.drawString(one.getName(), x - len / 2, y);
 			
-			
-			
-
-			// Message
+						// Message
 			g.setFont(fontMessage);
-			len = fontName.getWidth(one.getMessage());
-			g.setColor(new Color(200, 200, 200));
-			g.drawString(one.getMessage(), x - len / 2, y + ySpace + h);
+			len = fontName.getWidth(one.getMessageOne());
+			g.setColor(one.getMessageOneColor());
+			g.drawString(one.getMessageOne(), x - len / 2, y + ySpace + h);
 
 			// Message2
+			if(Game.infoMode)
+			{
 			g.setFont(fontMessage);
 			len = fontName.getWidth(one.getMessageTwo());
+			g.setColor(one.getMessageTwoColor());
 			g.drawString(one.getMessageTwo(), x - len / 2, y + ySpace * 2 + h);
+			}
 			
 			// Message3
-			g.setFont(fontMessage);
-			len = fontName.getWidth(one.getMessageThree());
-			g.drawString(one.getMessageThree(), x - len / 2, y + ySpace * 3 + h);
+			if(Game.infoMode)
+			{
+				g.setFont(fontMessage);
+				len = fontName.getWidth(one.getMessageThree());
+				g.setColor(one.getMessageThreeColor());
+				g.drawString(one.getMessageThree(), x - len / 2, y + ySpace * 3 + h);
+			}
+			
+			// Message4
+			if(Game.infoMode)
+			{
+				g.setFont(fontMessage);
+				len = fontName.getWidth(one.getMessageFour());
+				g.setColor(one.getMessageFourColor());
+				g.drawString(one.getMessageFour(), x - len / 2, y + ySpace * 4 + h);
+			}
 		}
 
 		x = Values.RESOLUTION_X - 450;
@@ -322,19 +336,36 @@ public class Display implements Values {
 
 			// Message
 			g.setFont(fontMessage);
-			len = fontName.getWidth(two.getMessage());
-			g.setColor(new Color(200, 200, 200));
-			g.drawString(two.getMessage(), x - len / 2, y + ySpace + h);
+			len = fontName.getWidth(two.getMessageOne());
+			g.setColor(two.getMessageOneColor());
+
+			g.drawString(two.getMessageOne(), x - len / 2, y + ySpace + h);
 
 			// Message2
+			if(Game.infoMode)
+			{
 			g.setFont(fontMessage);
 			len = fontName.getWidth(two.getMessageTwo());
+			g.setColor(two.getMessageTwoColor());
 			g.drawString(two.getMessageTwo(), x - len / 2, y + ySpace * 2 + h);
+			}
 			
 			// Message3
-			g.setFont(fontMessage);
-			len = fontName.getWidth(two.getMessageThree());
-			g.drawString(two.getMessageThree(), x - len / 2, y + ySpace * 3 + h);
+			if(Game.infoMode)
+			{
+				g.setFont(fontMessage);
+				len = fontName.getWidth(two.getMessageThree());
+				len = fontName.getWidth(two.getMessageThree());
+				g.drawString(two.getMessageThree(), x - len / 2, y + ySpace * 3 + h);
+			}
+			// Message4
+			if(Game.infoMode)
+			{
+				g.setFont(fontMessage);
+				len = fontName.getWidth(two.getMessageFour());
+				g.setColor(two.getMessageFourColor());
+				g.drawString(two.getMessageFour(), x - len / 2, y + ySpace * 4 + h);
+			}
 		}
 
 		// Game Speed

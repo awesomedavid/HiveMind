@@ -8,10 +8,11 @@ import objects.units.Miner;
 import objects.units.Unit;
 import teams.s2.Flash.Extras.HighYieldMiningAsteroid;
 import teams.s2.Flash.Extras.MiningAsteroid;
+import teams.s2.Flash.FsMiner;
 
 public class FsMiner extends Miner {
 
-	Fs p;
+	Flash p;
 
 	MiningAsteroid a;
 
@@ -22,7 +23,7 @@ public class FsMiner extends Miner {
 
 	/***************** Constructor ***************/
 
-	public FsMiner(Fs p) throws SlickException {
+	public FsMiner(Flash p) throws SlickException {
 		super(p);
 		this.p = p;
 	}
@@ -36,8 +37,10 @@ public class FsMiner extends Miner {
 			
 		if (getDistance(e) < 1155) {
 			stopMine();
+			shoot(e);
 			moveTo(getHomeBase());
 		} else {
+			shoot(e);
 			mine();
 		}
 		
@@ -132,7 +135,7 @@ public class FsMiner extends Miner {
 		float nearestDistance = Float.MAX_VALUE;
 		MiningAsteroid nearestTarget = null;
 
-		for (MiningAsteroid a : Fs.getMiningManager().getMiningAsteroids()) {
+		for (MiningAsteroid a : Flash.getMiningManager().getMiningAsteroids()) {
 			float d = Utility.distance(this, a);
 
 			if (d < nearestDistance && a.isOpen() && a.hasMinerals() && a.getAsteroid().hasMiningSlots()) {
@@ -150,7 +153,7 @@ public class FsMiner extends Miner {
 		float nearestDistance = Float.MAX_VALUE;
 		HighYieldMiningAsteroid nearestTarget = null;
 
-		for (HighYieldMiningAsteroid a : Fs.getMiningManager().getHighYieldMiningAsteroids()) {
+		for (HighYieldMiningAsteroid a : Flash.getMiningManager().getHighYieldMiningAsteroids()) {
 			float d = Utility.distance(this, a);
 
 			if (d < nearestDistance && a.isOpen() && a.hasMinerals() && a.getAsteroid().hasMiningSlots()) {

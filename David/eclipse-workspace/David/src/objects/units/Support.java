@@ -58,7 +58,7 @@ public abstract class Support extends Unit {
 
 	public boolean canHeal(Unit target)
 	{
-		return target.getHealTimer() < Values.SUPPORT_HEAL_COOLDOWN;
+		return target != null && target.getHealTimer() < Values.SUPPORT_HEAL_COOLDOWN;
 	}
 
 	public void update() {

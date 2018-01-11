@@ -4,48 +4,31 @@ import org.newdawn.slick.Color;
 
 
 /***********************************************************************
- *                        Patch Notes 2.02a	                           *
+ *                        Patch Notes 2.04a	                           *
  ***********************************************************************
  *
- * --Features--
- * Added a hidden holiday track (thanks to Aaron)
- * Modified the UI - added a power bar, changed shield graphics, added a visual for ready missiles
+ *  Features
+ *  - Killing a neutral base ship now awards 100 minerals
+ *  - Infomode is enabled by default
+ *  - Added a fourth player message.  Changed how player messages display:
+ *    - #1 is always on
+ *    - #2, #3 and #4 are only shown while using info mode (i)
+ *  
+ *  Scenario
+ *  - Base ship event start location is closer to the middle (To 1500 from 2500)
+ *  - Hazard start location is farther from the middle (To -1500 from -1000)
+ *  - PULSAR_PULSE_RANGE increased to 3500 from 3000
+ *  - PULSAR_PULSE_COOLDOWN increased to 6000 from 5000
+ *  - STAR_SOLAR_FLARE_COOLDOWN increased to 6000 from 5000
+ *  - STAR_SOLAR_FLARE_RANGE increased to 3500 from 3000
+ *  
+ *  Bug Fixes
+ *  - Neutral Units no longer spawn after their base ship is destroyed
+ *  - Legendary pulsars no longer permanently stun everything
+ *  
+ *  Methods
+ *  - Added a method to check if a unit is docked
  * 
- * --Major Changes---
- * Supports cannot heal the same target
- * Missiles can reload if a raider docks at the base, using the dock command while near the ship.
- * 
- * --Balance--
- * ASSAULT_ATTACK_DAMAGE reduced from 85 to 70
- * RAIDER_UPGRADE_MISSILE_ACCELERATION increased from 250 to 300
- * RAIDER_UPGRADE_MISSILE_DAMAGE increased from 80 to 120
- * RAIDER_UPGRADE_MISSILE_EFFECT_RADIUS increased to 100 from 75;
- * RAIDER_UPGRADE_MISSILE_TRIGGER_RADIUS increased to 75 from 60;
- * SUPPORT_HEAL_AMOUNT increased from 25 to 30
- * SUPPORT_UPGRADE_FIX_HEAL_AMOUNT increased from 30 to 40
- * MINER_UPGRADE_HULL_ARMOR_BONUS reduced from 20 to 15
- * MINER_UPGRADE_HULL_HEALTH_BONUS reduced from 100 to 50
- * MINER_UPGRADE_MINE_BUILD_TIME reduced from 240 to 120
- *
- * --New Methods-- 
- *
- * In Class Player...
- *  public int getFleetSize()
- *  public int getFleetSizeEnemy() 	
- *  public int getFleetCapacity()
- *  public float getFleetPercent()
- * 
- * In Class Unit....
- *   public Color getColor()						// returns the team's color.  Handy in draw method.
- *   public int getHealTimer() 
- *   public void setHealed()
- *   public boolean recentlyHealed()				// Was the unit healed within support's cooldown?
- *   public boolean recentlyHealed(int frames)
- *   public void dock()								// Docks the unit on the base.  Only useful for Raiders with missile (presently).
- *
- * In Class Raider...
- *    public boolean hasMissile()
- *
  */
 
 
@@ -57,8 +40,8 @@ public interface Values
 	public final static int NEUTRAL_ID = 2;
 	public final static int AMBIENT_ID = 3;
 	
-	public final static int RESOLUTION_X = 1921; 	// We're using a weird resolution for the projector
-	public final static int RESOLUTION_Y = 1081; 	// You can change this to fit your home system better
+	public final static int RESOLUTION_X = 1920;//1921; 	// We're using a weird resolution for the projector
+	public final static int RESOLUTION_Y = 1080; //1081; 	// You can change this to fit your home system better
 	
 	public final static int TRANSITION_FADE_TIME = 60;
 	public final static int TRANSITION_FADE_TIME_SLOW = 240;
@@ -90,6 +73,8 @@ public interface Values
 	
 	public final static int RESEARCH_TIME = FRAMES_PER_SECOND * 100;
 	public final static int RESEARCH_POINT_PER_UNIT_COST = 100;
+	public final static int RESEARCH_POINT_PER_MINERAL_MINED = 25;
+
 	public final static float COMBAT_VALUE_UPGRADE_MULTIPLIER = 1.3f;
 	
 	public final static int LATENCY_YELLOW = 750;
@@ -98,8 +83,9 @@ public interface Values
 	public final static int LATENCY_RED = 1500;
 	public final static float LATENCY_RED_MINERAL_EFFICIENCY = .5f;
 
-	public final static float MUSIC_SECRET_CHANCE = .05f;
-	
+	public final static float MUSIC_SPECIAL_CHANCE = .10f;
+	public final static float MUSIC_HIDDEN_CHANCE = .01f;
+
 	// currently deprecated
 	public final static int UPGRADE_COST = 0;
 	public final static int UPGRADE_TAX = 0;
@@ -136,22 +122,23 @@ public interface Values
 	
 	// HAZARDS & NEUTRALS
 	
-	public final static int HAZARD_Y_POSITION = -1000;
+	public final static int HAZARD_Y_POSITION = -1500;
 	public final static int NEUTRAL_Y_POSITION = -5000;
+	public final static int NEUTRAL_BASE_MINERAL_REWARD = 100;
 	
 	public final static int STAR_BASE_SIZE = 2000;
 	public final static int STAR_LEGENDARY_SIZE = (int) (STAR_BASE_SIZE * 1.5f);
 	public final static int STAR_SOLAR_FLARE_DURATION = 200;
 	public final static int STAR_SOLAR_FLARE_DAMAGE = 200;
-	public final static int STAR_SOLAR_FLARE_RANGE = 3000;
-	public final static int STAR_SOLAR_FLARE_COOLDOWN = 5000;
+	public final static int STAR_SOLAR_FLARE_RANGE = 3500;
+	public final static int STAR_SOLAR_FLARE_COOLDOWN = 6000;
 	
 	public final static int PULSAR_BASE_SIZE = 800;
 	public final static int PULSAR_LEGENDARY_SIZE = (int) (PULSAR_BASE_SIZE * 1.5f);
 	public final static int PULSAR_PULSE_DURATION = 200;
 	public final static int PULSAR_PULSE_STUN_DURATION = 750;
-	public final static int PULSAR_PULSE_RANGE = 3000;
-	public final static int PULSAR_PULSE_COOLDOWN = 5000;
+	public final static int PULSAR_PULSE_RANGE = 3500;
+	public final static int PULSAR_PULSE_COOLDOWN = 6000;
 	public final static int SHIELD_RECOVERY_DELAY = 480;
 
 	// Special Effects
@@ -168,7 +155,7 @@ public interface Values
 
 	public final static float BASE_SHIP_X_POSITION = 9000;		
 	public final static float BASE_SHIP_Y_POSITION = 0;
-	public final static float BASE_SHIP_Y_POSITION_ALTERNATE = 2500;
+	public final static float BASE_SHIP_Y_POSITION_ALTERNATE = 1500;
 
 	public final static float BASE_SHIP_SPEED = 1.3f * SPEED; 
 	public final static float BASE_SHIP_DRIFT = .0025f; 
@@ -207,6 +194,7 @@ public interface Values
 	public final static float RAIDER_UPGRADE_PIERCE_DAMAGE = 1.20f;		// Increases damage by this percent
 	public final static float RAIDER_UPGRADE_PIERCE_RANGE_BONUS = 0;	// Provides no range bonus
 	public final static float RAIDER_UPGRADE_PIERCE_PERCENT = .4f;		// Ignores this percentage of target's armor
+
 	// Engine
 	public final static float RAIDER_UPGRADE_ENGINE_SPEED_MULTIPLIER = 1.30f;
 	public final static float RAIDER_UPGRADE_ENGINE_ACCELERATION_MULTIPLIER = 1.30f;
@@ -218,11 +206,12 @@ public interface Values
 	public final static float RAIDER_UPGRADE_MISSILE_ACCELERATION = 300 * ACC;
 	public final static float RAIDER_UPGRADE_MISSILE_RANGE = 1200;
 	public final static float RAIDER_UPGRADE_MISSILE_HEALTH = 1;
-	public final static float RAIDER_UPGRADE_MISSILE_DAMAGE = 120;
-	public final static int RAIDER_UPGRADE_MISSILE_DODGE_CHANCE = 40;
+	public final static float RAIDER_UPGRADE_MISSILE_DAMAGE = 80;
+	public final static int RAIDER_UPGRADE_MISSILE_DODGE_CHANCE = 50;
 	public final static int RAIDER_UPGRADE_MISSILE_TIMER = 300;
-	public final static int RAIDER_UPGRADE_MISSILE_EFFECT_RADIUS = 100;
+	public final static int RAIDER_UPGRADE_MISSILE_EFFECT_RADIUS = 115;
 	public final static int RAIDER_UPGRADE_MISSILE_TRIGGER_RADIUS = 75;
+	public final static int RAIDER_UPGRADE_MISSILE_RESTOCK_TIME = 750;
 	
 	// Miner
 	// - No Basic Attack
@@ -241,10 +230,10 @@ public interface Values
 	public final static int MINER_ARMOR = 15;		
 
 	// Mining Laser
-	public final static float MINER_ATTACK_DAMAGE = 100;
+	public final static float MINER_ATTACK_DAMAGE = 75;
+	public final static int MINER_ATTACK_COOLDOWN = 250;
 	public final static int MINER_ATTACK_SPEED = 15;
 	public final static float MINER_ATTACK_RANGE = 375;
-	public final static int MINER_ATTACK_COOLDOWN = 300;
 	public final static float MINER_UPGRADE_RATE = MINER_RATE * 1.10f;		
 
 	//  Hull Upgrade
@@ -300,7 +289,7 @@ public interface Values
 	
 	// Aegis Upgrade
 	public final static float ASSAULT_UPGRADE_AEGIS_ENERGY_COST = 80;
-	public final static int ASSAULT_UPGRADE_AEGIS_DURATION = 500;
+	public final static int ASSAULT_UPGRADE_AEGIS_DURATION = 750;
 	public final static float ASSAULT_UPGRADE_AEGIS_DAMAGE_BLOCKED = .5f;
 
 	// Specialist
@@ -317,7 +306,7 @@ public interface Values
 	public final static float SPECIALIST_SPEED = 26 * SPEED;
 	public final static float SPECIALIST_ACCELERATION = 20 * ACC;
 	
-	public final static float SPECIALIST_ATTACK_DAMAGE = 400;
+	public final static float SPECIALIST_ATTACK_DAMAGE = 360;
 	public final static float SPECIALIST_ATTACK_ENERGY_COST = 18;
 	public final static float SPECIALIST_ATTACK_RANGE = 1050;
 	public final static int SPECIALIST_ATTACK_COOLDOWN = 550;
@@ -365,7 +354,7 @@ public interface Values
 
     // EMP Upgrade:  Allows use of the EMP Ability
 	
-	public final static float SUPPORT_UPGRADE_EMP_RADIUS_PER_ENERGY = 2.8f;
+	public final static float SUPPORT_UPGRADE_EMP_RADIUS_PER_ENERGY = 3.5f;
 	public final static float SUPPORT_UPGRADE_EMP_DURATION_PER_ENERGY = 1.3f;  
 	public final static int SUPPORT_UPGRADE_EMP_MINIMUM_ENERGY = 75;	
 	public final static int SUPPORT_UPGRADE_EMP_MINIMUM_RADIUS = (int) (SUPPORT_UPGRADE_EMP_MINIMUM_ENERGY * SUPPORT_UPGRADE_EMP_RADIUS_PER_ENERGY);
