@@ -39,7 +39,7 @@ public class FsAssault extends Assault {
 				index = i;
 			}
 		}
-		if(getCurHealth()/getMaxHealth()<.1) {
+		if (getCurHealth() / getMaxHealth() < .1) {
 			ability();
 		}
 		if (Game.getTime() / 80 < 80) {
@@ -63,18 +63,23 @@ public class FsAssault extends Assault {
 				shoot(e);
 			}
 			if (e instanceof Specialist) {
-				if(getDistance(e)<1055) {
-					ability();
+				if (hasDamageReduction()) {
+					circle(e);
+					shoot(e);
+				} else {
+					if (getDistance(e) < 1055) {
+						ability();
+					}
+					if (nearestAlly(Specialist.class) != null)
+						circle(nearestAlly(Specialist.class));
+					else if (nearestAlly(Raider.class) != null)
+						circle(nearestAlly(Raider.class));
+					else if (mvm != null)
+						circle(mvm);
+					else
+						moveTo(getHomeBase());
+					shoot(e);
 				}
-				if (mvm != null)
-					circle(mvm);
-				else if (nearestAlly(Raider.class) != null)
-					circle(nearestAlly(Raider.class));
-				else if (nearestAlly(Specialist.class) != null)
-					circle(nearestAlly(Specialist.class));
-				else
-					moveTo(getHomeBase());
-				shoot(e);
 			}
 			if (e instanceof Miner) {
 				circle(e);
@@ -89,7 +94,7 @@ public class FsAssault extends Assault {
 					} else if (nearestAlly(Assault.class) != null) {
 						circle(nearestAlly(Assault.class));
 						shoot(e);
-					} else {					
+					} else {
 						if (mvm != null) {
 							circle(mvm);
 							shoot(e);

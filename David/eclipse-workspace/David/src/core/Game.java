@@ -47,7 +47,7 @@ public class Game extends BasicGameState
 		playerOne = new Flash(Values.BLUE_ID, this);
 		playerOne.setDifficultyRating(1);			
 		
-		playerTwo = new Heavy(Values.RED_ID, this);
+		playerTwo = new Swarm(Values.RED_ID, this);
 		playerTwo.setDifficultyRating(1);
 	}
 	

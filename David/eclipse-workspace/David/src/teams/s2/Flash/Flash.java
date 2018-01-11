@@ -88,8 +88,8 @@ public class Flash extends Player {
 		if ((countEnemyAssaults()-countNeutralAssaults()) > countMySpecialists()) {
 			addSpecialistToQueue();
 		}
-		if (getMinerals()> 25) {			
-			if((countMyUnits()-countMyMiners())/4>countMySupports()) {
+		if (getMinerals()> 23) {			
+			if((countMyUnits()-countMyMiners())/3>countMySupports()) {
 				addSupportToQueue();							
 			}else if(countMyAssaults() < countMyRaiders()/3) {
 				addAssaultToQueue();
