@@ -47,10 +47,10 @@ public class FsRaider extends Raider {
 				index = i;
 			}
 		}
-		if (Game.getTime()/80 < 80) {
+		if (Game.getTime() / 80 < 80) {
 			circle(mvm);
 			shoot(e);
-		}else if(getOwner().countMyRaiders()<8) {
+		} else if (getOwner().countMyRaiders() < 4) {
 			if (mvs != null) {
 				if (mvm != null && mvm.getDistance(e) < mvs.getDistance(e)) {
 					circle(mvm);
@@ -63,8 +63,7 @@ public class FsRaider extends Raider {
 				circle(nearestAlly(Assault.class));
 				shoot(e);
 			}
-		}
-		else {
+		} else {
 			if (e instanceof BaseShip && getHomeBase().getDistance(getEnemyBase()) < 1000) {
 				moveTo(e);
 				shoot(e);
@@ -77,13 +76,16 @@ public class FsRaider extends Raider {
 			if (e instanceof Assault) {
 				if (mvs != null) {
 					if (mvm != null && mvm.getDistance(e) < mvs.getDistance(e)) {
+						ability(e);
 						circle(mvm);
 						shoot(e);
 					} else {
+						ability(e);
 						circle(mvs);
 						shoot(e);
 					}
 				} else {
+					ability(e);
 					circle(nearestAlly(Assault.class));
 					shoot(e);
 				}
@@ -92,19 +94,24 @@ public class FsRaider extends Raider {
 			if (e instanceof Raider) {
 				if (e.getDistance(getEnemyBase()) < 500) {
 					if (mvs != null) {
+						ability(e);
 						circle(mvs);
 						shoot(e);
 					} else if (nearestAlly(Assault.class) != null) {
+						ability(e);
 						circle(nearestAlly(Assault.class));
 						shoot(e);
 					} else {
+						ability(e);
 						circle(mvm);
 						shoot(e);
 					}
 				} else {
+					ability(e);
 					moveTo(e);
 					shoot(e);
 				}
+				
 			}
 			if (e instanceof Specialist) {
 				if (e.getDistance(getEnemyBase()) < 500) {
@@ -122,6 +129,7 @@ public class FsRaider extends Raider {
 					moveTo(e);
 					shoot(e);
 				}
+				ability(e);
 			}
 			if (e instanceof Miner) {
 				if (e.getDistance(getEnemyBase()) < 500) {
@@ -179,7 +187,30 @@ public class FsRaider extends Raider {
 	/***************** Order Methods ***************/
 
 	protected void attack() {
-		// This method is called every frame while the unit's order is set to ATTACK
+		Unit e = nearestEnemy();
+
+		if (p.countEnemyUnits() - p.countEnemyMiners() > 5) {
+			if (getDistance(e) < 2000 && p.countEnemyMiners() > 0) {
+				if (e instanceof Miner) {
+					moveTo(e);
+				} else {
+					turnTo(e);
+					move((int) getAngleToward(e.getCenterX(), e.getCenterY()) + 120);
+				}
+			} else {
+				if (p.getMostVulerableEnemy(Miner.class) != null) {
+					moveTo(p.getMostVulerableEnemy(Miner.class));
+				} else {
+					moveTo(e);
+				}
+			}
+		} else {
+			if (Game.getTime() > 10000 && getDistance(getEnemyBase()) < 7500 && p.countMyRaiders() > 15) {
+				moveTo(e);
+			} else {
+				moveTo(getHomeBase());
+			}
+		}
 	}
 
 	protected void defend() {

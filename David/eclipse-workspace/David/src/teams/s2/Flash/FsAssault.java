@@ -10,6 +10,7 @@ import core.Utility;
 import objects.units.Assault;
 import objects.units.BaseShip;
 import objects.units.Miner;
+import objects.units.Missile;
 import objects.units.Raider;
 import objects.units.Specialist;
 import objects.units.Support;
@@ -46,43 +47,51 @@ public class FsAssault extends Assault {
 			moveTo(mvm);
 			shoot(e);
 		} else {
-			if (e instanceof BaseShip && getHomeBase().getDistance(getEnemyBase()) < 1000) {
-				moveTo(e);
+			if (getOwner().countMyAssaults() < 2) {
+				if (nearestAlly(Specialist.class) != null)
+					circle(nearestAlly(Specialist.class));
+				else if (nearestAlly(Raider.class) != null)
+					circle(nearestAlly(Raider.class));
+				else if (mvm != null)
+					circle(mvm);
+				else
+					moveTo(getHomeBase());
 				shoot(e);
-			}
-			if (e instanceof BaseShip) {
-				circle(mvm);
-				shoot(e);
-			}
-			if (e instanceof Assault) {
-				circle(e);
-				shoot(e);
-			}
-			if (e instanceof Raider) {
-				circle(e);
-				shoot(e);
-			}
-			if (e instanceof Specialist) {
-
-				if (hasDamageReduction()) {
+			} else {
+				if (e instanceof BaseShip && getHomeBase().getDistance(getEnemyBase()) < 1000) {
+					moveTo(e);
+					shoot(e);
+				}
+				if (e instanceof BaseShip) {
+					circle(mvm);
+					shoot(e);
+				}
+				if (e instanceof Assault) {
 					circle(e);
 					shoot(e);
-				} else {
-					if (getDistance(e) < 1055) {
-						ability();
-					}
-					if (nearestAlly(Specialist.class) != null)
-						circle(nearestAlly(Specialist.class));
-					else if (nearestAlly(Raider.class) != null)
-						circle(nearestAlly(Raider.class));
-					else if (mvm != null)
-						circle(mvm);
-					else
-						moveTo(getHomeBase());
+				}
+				if (e instanceof Raider) {
+					circle(e);
 					shoot(e);
+				}
+				if (e instanceof Specialist) {
 
-					if (getDistance(e) < 1055) {
-						ability();
+					if (hasDamageReduction()) {
+						circle(e);
+						shoot(e);
+					} else {
+						if (getDistance(e) < 1055) {
+							ability();
+						}
+						if (nearestAlly(Specialist.class) != null)
+							circle(nearestAlly(Specialist.class));
+						else if (nearestAlly(Raider.class) != null)
+							circle(nearestAlly(Raider.class));
+						else if (mvm != null)
+							circle(mvm);
+						else
+							moveTo(getHomeBase());
+						shoot(e);
 
 					}
 				}

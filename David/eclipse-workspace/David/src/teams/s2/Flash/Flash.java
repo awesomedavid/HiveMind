@@ -64,10 +64,11 @@ public class Flash extends Player {
 		}
 		beginResearch(AssaultAegis.class);
 		beginResearch(MinerLaser.class);				
-		beginResearch(RaiderPierce.class);
+		beginResearch(RaiderMissile.class);
 		beginResearch(MinerHull.class);
 		beginResearch(AssaultShield.class);		
-		beginResearch(SpecialistReactor.class);			
+		beginResearch(SpecialistReactor.class);
+		beginResearch(RaiderPierce.class);
 		beginResearch(SupportEnergy.class);
 		beginResearch(RaiderEngine.class);
 		beginResearch(SpecialistKinetic.class);
@@ -144,6 +145,42 @@ public class Flash extends Player {
 		}
 		return units;
 	}
+	public Unit getMostVulerableEnemy(Class<? extends Unit> clazz) {
+
+		Unit bestUnit = null;
+
+		if (getEnemyUnits().isEmpty() || getEnemyUnitsExclude(Miner.class).isEmpty()) {
+			return null;
+		}
+
+		ArrayList<Unit> units = getEnemyUnitsExclude(Miner.class);
+
+		float totalX = 0;
+		float totalY = 0;
+
+		int averageY = 0;
+		int averageX = 0;
+
+		int maxDistance = 0;
+
+		for (Unit u : units) {
+			totalX += u.getCenterX();
+			totalY += u.getCenterY();
+
+			averageX = (int) (totalX / units.size());
+			averageY = (int) (totalY / units.size());
+		}
+
+		for (Unit u : getEnemyUnits(clazz)) {
+			if (u.getDistance(averageX, averageY) > maxDistance
+					&& (u.countEnemiesInRadius(1200) - u.getEnemiesInRadius(1200, Miner.class).size()) < 2) {
+				maxDistance = (int) u.getDistance(averageX, averageY);
+				bestUnit = u;
+			}
+		}
+		return bestUnit;
+	}
+
 	/*****************
 	 * Build Methods ***************\
 	 * 
