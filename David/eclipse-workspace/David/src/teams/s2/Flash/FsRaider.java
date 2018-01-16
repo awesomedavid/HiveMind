@@ -76,42 +76,36 @@ public class FsRaider extends Raider {
 			if (e instanceof Assault) {
 				if (mvs != null) {
 					if (mvm != null && mvm.getDistance(e) < mvs.getDistance(e)) {
-						ability(e);
 						circle(mvm);
 						shoot(e);
 					} else {
-						ability(e);
 						circle(mvs);
 						shoot(e);
 					}
 				} else {
-					ability(e);
 					circle(nearestAlly(Assault.class));
 					shoot(e);
 				}
+				ability(e);
 			}
 
 			if (e instanceof Raider) {
 				if (e.getDistance(getEnemyBase()) < 500) {
 					if (mvs != null) {
-						ability(e);
 						circle(mvs);
 						shoot(e);
 					} else if (nearestAlly(Assault.class) != null) {
-						ability(e);
 						circle(nearestAlly(Assault.class));
 						shoot(e);
 					} else {
-						ability(e);
 						circle(mvm);
 						shoot(e);
 					}
 				} else {
-					ability(e);
 					moveTo(e);
 					shoot(e);
 				}
-				
+				ability(e);
 			}
 			if (e instanceof Specialist) {
 				if (e.getDistance(getEnemyBase()) < 500) {
@@ -147,6 +141,7 @@ public class FsRaider extends Raider {
 					moveTo(e);
 					shoot(e);
 				}
+				ability(e);
 			}
 			if (e instanceof Support) {
 				if (e.getDistance(getEnemyBase()) < 500) {
@@ -164,8 +159,8 @@ public class FsRaider extends Raider {
 					moveTo(e);
 					shoot(e);
 				}
+				ability(e);
 			}
-
 		}
 	}
 

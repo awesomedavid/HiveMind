@@ -14,7 +14,16 @@ import objects.units.Unit;
 
 public class FsSupport extends Support {
 	Flash p;
+	Unit u = nearestAlly();
+//	Unit s = nearestAlly();
 
+	public Unit getU() {
+		return u;
+	}
+
+	public void setU(Unit u) {
+		this.u = u;
+	}
 
 	public FsSupport(Flash p) throws SlickException {
 		super(p);
@@ -26,22 +35,20 @@ public class FsSupport extends Support {
 	public void action() {
 		// This method is called every frame, BEFORE the relevant order method is called
 		ArrayList<Unit> Units = getOwner().getMyUnits();
-		Unit u = nearestAllyExclude(Support.class);
+		ArrayList<Unit> Supports = getOwner().getMyUnits(Support.class);
 		for (int i = 0; i < Units.size(); i++) {
-			if (canHeal(Units.get(i))&&(Units.get(i).getCurHealth()/Units.get(i).getMaxHealth())<(u.getCurHealth()/u.getMaxHealth())) {
+			if (canHeal(Units.get(i)) && (Units.get(i).getCurHealth() / Units.get(i).getMaxHealth()) < (u.getCurHealth()
+					/ u.getMaxHealth())) {
 				u = Units.get(i);
 			}
 		}
+//		for (int i = 0; i < Supports.size(); i++) {
+//			if (Supports.get(i) instanceof FsSupport) {
+//				
+//			}
+//		}
 
-		if (getDistance(u) < 200) {
-			moveTo(getHomeBase());
-		} else {
-			if (!(u instanceof Miner)) {
-				moveTo(u.getX(), u.getY());
-			}else {
-				moveTo(getHomeBase());
-			}
-		}
+		moveTo(u.getX(), u.getY());
 		if (u != null && u.isDamaged()) {
 			shoot(u);
 		}

@@ -50,10 +50,10 @@ public class FsAssault extends Assault {
 			if (getOwner().countMyAssaults() < 2) {
 				if (nearestAlly(Specialist.class) != null)
 					circle(nearestAlly(Specialist.class));
-				else if (nearestAlly(Raider.class) != null)
-					circle(nearestAlly(Raider.class));
 				else if (mvm != null)
 					circle(mvm);
+				else if (nearestAlly(Raider.class) != null)
+					circle(nearestAlly(Raider.class));
 				else
 					moveTo(getHomeBase());
 				shoot(e);
@@ -85,10 +85,10 @@ public class FsAssault extends Assault {
 						}
 						if (nearestAlly(Specialist.class) != null)
 							circle(nearestAlly(Specialist.class));
-						else if (nearestAlly(Raider.class) != null)
-							circle(nearestAlly(Raider.class));
 						else if (mvm != null)
 							circle(mvm);
+						else if (nearestAlly(Raider.class) != null)
+							circle(nearestAlly(Raider.class));
 						else
 							moveTo(getHomeBase());
 						shoot(e);
@@ -101,27 +101,22 @@ public class FsAssault extends Assault {
 				}
 
 				if (e instanceof Support) {
-					if (e.getDistance(getEnemyBase()) < 500) {
-						if (nearestAlly(Specialist.class) != null) {
-							circle(nearestAlly(Specialist.class));
-							shoot(e);
-						} else if (nearestAlly(Assault.class) != null) {
-							circle(nearestAlly(Assault.class));
-							shoot(e);
-						} else {
-							if (mvm != null) {
-								circle(mvm);
-								shoot(e);
-							}
-						}
-					} else {
-						moveTo(e);
-						shoot(e);
-					}
+					if (nearestAlly(Specialist.class) != null)
+						circle(nearestAlly(Specialist.class));
+					else if (mvm != null)
+						circle(mvm);
+					else if (nearestAlly(Raider.class) != null)
+						circle(nearestAlly(Raider.class));
+					else
+						moveTo(getHomeBase());
+					shoot(e);
+
 				}
 			}
 		}
 	}
+
+	
 
 	/***************** Order Methods ***************/
 
