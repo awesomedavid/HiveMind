@@ -22,7 +22,7 @@ final public class MineExplosion extends AbilityArea
 	{
 		if(charges > 0)
 		{
-			super.use(owner.getLocation());
+			super.use(owner.getPosition());
 			charges--;
 
 			if(owner != null)

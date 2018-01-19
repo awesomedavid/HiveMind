@@ -1,5 +1,6 @@
 package objects.units;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Point;
@@ -8,7 +9,8 @@ import abilities.MissileExplosion;
 import animations.SmokeWhite;
 import core.Game;
 import core.Values;
-import ui.Images;
+import ui.display.Camera;
+import ui.display.Images;
 
 public final class Missile extends Unit 
 {
@@ -80,6 +82,16 @@ public final class Missile extends Unit
 		
 
 		
+	}
+	
+	final public void render(Graphics g) 
+	{
+		if (image != null) 
+		{
+			image.setCenterOfRotation(image.getWidth() / 2 * scale, image.getHeight() / 2 * scale);
+			image.setRotation(theta);
+			image.draw(x, y, scale);
+		}
 	}
 	
 	final protected void deathTrigger()

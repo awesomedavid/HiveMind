@@ -11,7 +11,7 @@ import effects.DamageIgnoreArmor;
 import objects.ambient.BigStar;
 import objects.base.Player;
 import objects.units.Unit;
-import ui.Alert;
+import ui.display.Alert;
 
 public class SolarFlare extends Event {
 	private int range;

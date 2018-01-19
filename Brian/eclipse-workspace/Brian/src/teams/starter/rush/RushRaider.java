@@ -15,27 +15,33 @@ public class RushRaider extends Raider {
 		this.p = p;
 	}
 
-	public void action() {
+	public void action() 
+	{		
 		// Moves toward the nearest enemy Miner
 		Unit a = nearestEnemy(Miner.class);
-		if (a == null) {
+		if(a == null)
+		{
 			moveTo(nearestAllyExclude(Raider.class));
-		} else {
+		}
+		else
+		{
 			moveTo(a);
 		}
-
+		
 		// Attacks nearest enemy
 		Unit b = nearestEnemy();
 		shoot(b);
 	}
 
-	protected void attack() {
+	protected void attack()
+	{
 		// TODO Auto-generated method stub
 	}
 
 	protected void defend() {
 		// TODO Auto-generated method stub
 	}
+
 
 	protected void guard() {
 		// TODO Auto-generated method stub
@@ -64,6 +70,6 @@ public class RushRaider extends Raider {
 
 	public void draw(Graphics g) {
 		// TODO Auto-generated method stub
-
+		
 	}
 }

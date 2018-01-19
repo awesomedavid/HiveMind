@@ -51,9 +51,15 @@ public abstract class Player {
 	private float mineralsMined;
 	private float mineralsLost;
 	private String name;
-	private String message;
+	private String messageOne;
 	private String messageTwo;
 	private String messageThree;
+	private String messageFour;
+	private Color messageOneColor;
+	private Color messageTwoColor;
+	private Color messageThreeColor;
+	private Color messageFourColor;
+
 
 	private int team;
 	private boolean isDefeated;
@@ -62,15 +68,21 @@ public abstract class Player {
 	
 	private int researchTimer;
 	private Upgrade researchGoal;
+	private int researchCount = 0;
 
 	private ArrayList<Unit> alliedUnitList;
 	private ArrayList<Unit> enemyUnitList;
+	private ArrayList<Unit> neutralUnitList;
+
+
 	private Map<Class<? extends Unit>, Integer> alliedUnitCount;
 	private Map<Class<? extends Unit>, Integer> enemyUnitCount;
 	private Map<Class<? extends Unit>, Integer> alliedUnitQueueCount;
-		
+	private Map<Class<? extends Unit>, Integer> neutralUnitCount;	
+	
 	private int armyValue;
-	private int armyValueEnemy;
+	private int armyValueOpponent;
+	private int armyValueNeutral;
 	
 	private SpriteSheet imageBase;
 	private SpriteSheet imageRaider;
@@ -141,11 +153,20 @@ public abstract class Player {
 		upgrades = new ArrayList<Upgrade>();
 		timer = 0;
 		name = "Player";
-		message = " ";
+		messageOne = " ";
 		messageTwo = " ";
 		messageThree = " ";
+		messageFour = " ";
+		messageOneColor = Color.white;
+		messageTwoColor = Color.white;
+		messageThreeColor = Color.white;
+		messageFourColor = Color.white;
+		
 		buildQueue = new LinkedList<BuildOrder>();
 		loadImageSet("classic");
+
+
+
 	}
 	
 	public void addLatency(long amount)
@@ -220,16 +241,19 @@ public abstract class Player {
 		{
 			researchTimer--;
 		}
-		if(researchTimer == 0 && researchGoal != null)
+		if(researchTimer <= 0 && researchGoal != null)
 		{
 			completeResearch();
+
 		}
 
 		// Try to spawn a unit if the time is up
 		if (!buildQueue.isEmpty() && buildQueue.peek().time == 0) 
 		{
 			// Hold on spawning the unit if we've hit the unit cap
-			if(getTotalValue() + buildQueue.peek().value <= Values.BASE_UNIT_VALUE_CAP)
+			if(getMyBase() != null && 
+			   getMyBase().isAlive() && 
+			   getFleetSize() + buildQueue.peek().value <= Values.BASE_UNIT_VALUE_CAP)
 			{
 				Class<? extends Unit> type = buildQueue.poll().name;
 				spawnUnit(type);
@@ -249,11 +273,15 @@ public abstract class Player {
 		// ENEMY CONTENT
 		enemyUnitList = Game.getEnemies(this);
 		enemyUnitCount = countUnits(enemyUnitList);
-
+		
+		// NEUTRAL CONTENT
+		neutralUnitList = Game.getNeutrals();
+		neutralUnitCount = countUnits(neutralUnitList);
 
 		armyValue = calculateArmyValue(getMyUnits());
-		armyValueEnemy = calculateArmyValue(getEnemyUnits());
-		
+		armyValueOpponent = calculateArmyValue(getOpponent().getMyUnits());
+		armyValueNeutral = calculateArmyValue(getNeutralUnits());
+
 		action();
 
 	}
@@ -305,19 +333,28 @@ public abstract class Player {
 		return units;
 	}
 
+	public int getUpgradeCount()
+	{
+		return researchCount;
+	}
+	public void advanceResearch(int amount)
+	{
+		researchTimer -= amount;
+	}
 	public boolean isResearching()
 	{
-		return researchTimer != 0;
+		return researchTimer > 0;
 	}
 	public int getResearchTimeLeft()
 	{
-		return researchTimer;
+		return Math.max(researchTimer, 0);
 	}
 	
 	public boolean isDefeated()
 	{
 		return isDefeated;
 	}
+	
 	public int countMyUnit(Class<? extends Unit> clazz) {
 		return countMyUnitInPlay(clazz) + countUnit(clazz, alliedUnitQueueCount);
 	}
@@ -372,6 +409,7 @@ public abstract class Player {
 	public int countEnemyUnit(Class<? extends Unit> clazz) {
 		return countUnit(clazz, enemyUnitCount);
 	}
+	
 	public int countEnemyUnits() {
 		return countEnemyRaiders() + countEnemyMiners() + countEnemyAssaults() 
 		+ countEnemySupports() + countEnemySpecialists();		}
@@ -394,6 +432,35 @@ public abstract class Player {
 
 	public int countEnemySupports() {
 		return countEnemyUnit(Support.class);
+	}
+	
+	
+	public int countNeutralUnit(Class<? extends Unit> clazz) {
+		return countUnit(clazz, neutralUnitCount);
+	}
+	
+	public int countNeutralUnits() {
+		return countNeutralRaiders() + countNeutralMiners() + countNeutralAssaults() 
+		+ countNeutralSupports() + countNeutralSpecialists();		}
+
+	public int countNeutralRaiders() {
+		return countNeutralUnit(Raider.class);
+	}
+
+	public int countNeutralMiners() {
+		return countNeutralUnit(Miner.class);
+	}
+
+	public int countNeutralAssaults() {
+		return countNeutralUnit(Assault.class);
+	}
+
+	public int countNeutralSpecialists() {
+		return countNeutralUnit(Specialist.class);
+	}
+
+	public int countNeutralSupports() {
+		return countNeutralUnit(Support.class);
 	}
 
 	public ArrayList<Unit> getMyUnits() 
@@ -436,12 +503,11 @@ public abstract class Player {
 		return enemyUnitList;
 	}
 	
-	//deprecated
-	public ArrayList<Unit> getEnemies(Class<? extends Unit> clazz) 
+	public ArrayList<Unit> getNeutralUnits() 
 	{
-		return getEnemyUnits(clazz);
+		return neutralUnitList;
 	}
-	
+		
 	public ArrayList<Unit> getEnemyUnits(Class<? extends Unit> clazz) 
 	{
 		ArrayList<Unit> units = new ArrayList<Unit>();
@@ -460,15 +526,25 @@ public abstract class Player {
 		return units;
 	}
 
-	public int getTotalValue() {
-		return calculateTotalValue(getMyUnits());
+	public int getFleetSize() {
+		return calculateFleetSize(getMyUnits());
 	}
 
-	public int getTotalValueEnemy() {
-		return calculateTotalValue(getEnemyUnits());
+	public int getFleetSizeEnemy() {
+		return calculateFleetSize(getEnemyUnits());
 	}
 	
-	private int calculateTotalValue(List<Unit> units) 
+	public int getFleetCapacity()
+	{
+		return Values.BASE_UNIT_VALUE_CAP;
+	}
+	
+	public float getFleetPercent()
+	{
+		return (float) getFleetSize() / (float) getFleetCapacity();
+	}
+	
+	private int calculateFleetSize(List<Unit> units) 
 	{
 		int value = 0;
 		
@@ -503,8 +579,8 @@ public abstract class Player {
 		return name;
 	}
 
-	public String getMessage() {
-		return message;
+	public String getMessageOne() {
+		return messageOne;
 	}
 
 	public String getMessageTwo() {
@@ -515,14 +591,39 @@ public abstract class Player {
 	public String getMessageThree() {
 		return messageThree;
 	}
+	
+	public String getMessageFour() {
+		return messageFour;
+	}
+	
+	public Color getMessageOneColor() {
+		return messageOneColor;
+	}
+		
+	public Color getMessageTwoColor() {
+		return messageTwoColor;
+	}
+	
+	public Color getMessageThreeColor() {
+		return messageThreeColor;
+	}
+
+	public Color getMessageFourColor() {
+		return messageFourColor;
+	}
+
 
 	public int getArmyValue() {
 		return armyValue;
 	}
 
 	public int getArmyValueOpponent() {
-		return armyValueEnemy;
+		return armyValueOpponent;
 	}
+	
+	public int getArmyValueNeutral() {
+		return armyValueNeutral;
+	}	
 
 	public float getMinerals() {
 		return minerals;
@@ -632,12 +733,21 @@ public abstract class Player {
 		return false;
 	}
 
-	public boolean beginResearch(Class<? extends Upgrade> type) {
+	public boolean beginResearch(Class<? extends Upgrade> type) 
+	{
 		if (!isResearching() && !hasResearch(type)) {
 			try 
 			{
 				researchGoal = type.newInstance();
-				researchTimer = Values.RESEARCH_TIME;	
+				if(researchCount == 0)
+				{
+					completeResearch();
+				}
+				else
+				{
+					researchTimer = Values.RESEARCH_TIME;	
+				}
+
 				return true;
 			} catch (InstantiationException e) {
 				e.printStackTrace();
@@ -655,6 +765,7 @@ public abstract class Player {
 		//Data.addEvent(new UpgradeEvent(getTeam(), Game.getTime(), val)); 
 		upgrades.add(researchGoal);
 		researchGoal = null;
+		researchCount++;
 	}
 
 	//deprecated - remove after kids fix their code
@@ -708,7 +819,7 @@ public abstract class Player {
 	}
 
 	public void setMessageOne(String m) {
-		message = m;
+		messageOne = m;
 	}
 
 	public void setMessageTwo(String m) {
@@ -717,6 +828,23 @@ public abstract class Player {
 	
 	public void setMessageThree(String m) {
 		messageThree = m;
+	}
+	
+	public void setMessageFour(String m) {
+		messageFour = m;
+	}
+
+	public void setMessageOneColor(Color c) {
+		messageOneColor = c;
+	}
+	public void setMessageTwoColor(Color c) {
+		messageTwoColor = c;
+	}	
+	public void setMessageThreeColor(Color c) {
+		messageThreeColor = c;
+	}	
+	public void setMessageFourColor(Color c) {
+		messageFourColor = c;
 	}
 
 	public void addMinerals(float amount) 
@@ -727,9 +855,11 @@ public abstract class Player {
 		mineralsMined += actualAmount;
 		mineralsLost += amount - actualAmount;
 		
+		if(getMyBase() != null)
+		{
 		Game.addAnimation(new AnimationText(getMyBase().getX() + Utility.random((int)getMyBase().getWidth()), 
                 getMyBase().getY(), "+" + (int) actualAmount, 255, 255, 0)); 
-		
+		}
 	}
 
 	public void subtractMinerals(float amount) {

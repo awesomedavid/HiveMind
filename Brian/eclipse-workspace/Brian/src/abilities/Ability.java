@@ -41,7 +41,7 @@ public class Ability
 	{
 		
 	}
-	
+		
 	public void update()
 	{
 		if(cooldown != -1)
@@ -50,7 +50,6 @@ public class Ability
 			{
 				timer--;
 			}
-	
 		}
 	}
 	

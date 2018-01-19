@@ -4,7 +4,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
 import core.Utility;
-import ui.Fonts;
+import ui.display.Fonts;
 
 public class AnimationSpark extends Animation
 {

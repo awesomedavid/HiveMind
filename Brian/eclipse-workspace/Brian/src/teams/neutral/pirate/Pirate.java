@@ -29,17 +29,30 @@ import objects.upgrades.SpecialistReactor;
 import objects.upgrades.SpecialistRift;
 import objects.upgrades.SupportEnergy;
 import objects.upgrades.SupportFix;
-import ui.Alert;
+import scenario.Adjective;
+import scenario.Scenario;
+import ui.display.Alert;
 
 public class Pirate extends Player {
 	
 	boolean alerted = false;
 	float escalation = 1f;
+	boolean respectful = false;
 	
 	public Pirate(int team, Game g) throws SlickException {
 		super(team, g);
 		setName("Pirate");
-		loadImageSet("pirate");
+		if(Scenario.getAdjective() == Adjective.READY ||
+				Scenario.getAdjective() == Adjective.RESPECTFUL ||
+				Scenario.getAdjective() == Adjective.RELENTLESS)
+		{
+			loadImageSet("pirate_rrr");
+		}
+		else
+		{
+			loadImageSet("pirate");
+		}
+
 	}
 
 	public Raider buildRaider() throws SlickException {
@@ -71,14 +84,24 @@ public class Pirate extends Player {
 			addRaiderToQueue();
 		}
 
-		if (getMyBase() == null) {
-			setSkirmishMode();
-		} else if (countMyRaiders() > 24 * escalation) {
-			setSkirmishMode();
-		} else if (countMyRaiders() > 16 * escalation) {
-			setRallyMode();
-		} else {
+		
+		
+		if(respectful)
+		{
 			setGuardMode();
+		}
+		else
+		{
+			if (getMyBase() == null) {
+				setSkirmishMode();
+			} else if (countMyRaiders() > 24 * escalation) {
+				setSkirmishMode();
+			} else if (countMyRaiders() > 16 * escalation) {
+				setRallyMode();
+			} else {
+				setGuardMode();
+			}
+
 		}
 
 	}
@@ -138,6 +161,10 @@ public class Pirate extends Player {
 		}
 	}
 
+	public void beRespectful()
+	{
+		respectful = true;
+	}
 
 	@Override
 	public void draw(Graphics g) {

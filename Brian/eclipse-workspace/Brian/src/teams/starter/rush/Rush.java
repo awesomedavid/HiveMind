@@ -64,7 +64,7 @@ public class Rush extends Player {
 		if (countMyMiners() < 2 || countMySpecialists() > countMyMiners()) {
 			addMinerToQueue();
 		}
-
+		
 		// Keep a 4:1 ratio of raider : specialist
 		else if (countMyRaiders() < countMySpecialists() * 4) {
 			addRaiderToQueue();
@@ -72,6 +72,7 @@ public class Rush extends Player {
 			addSpecialistToQueue();
 
 		}
+
 	}
 
 	public void draw(Graphics g) {

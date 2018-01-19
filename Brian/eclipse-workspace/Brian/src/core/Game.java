@@ -26,27 +26,26 @@ import objects.units.Mine;
 import objects.units.Turret;
 import objects.units.Unit;
 import scenario.Scenario;
-import teams.s2.Fs.Fs;
-import teams.starter.random.Random;
+import teams.s2.Flash.Flash;
 import teams.starter.heavy.Heavy;
-import teams.starter.rush.Rush;
+import teams.starter.random.Random;
 import teams.starter.swarm.Swarm;
-import ui.Audio;
-import ui.Camera;
-import ui.Display;
-import ui.Starfield;
+import ui.display.Camera;
+import ui.display.Display;
+import ui.display.Starfield;
+import ui.sound.Audio;
 
 public class Game extends BasicGameState 
 {
 	// Common game setting toggles
 	public static boolean infoMode = true;		// Displays additional information in the UI.  Press 'i' to toggle in game
-	public static boolean sfxOn = false;			// Enable sound effects
-	public static boolean musicOn = false;		// Enables music.  Press 'm' to cycle track in game.
-	public static boolean basicMode = false;		// Hides complicated events, such as Solar Flares and Pirates
+	public static boolean sfxOn = true;		    // Enable sound effects
+	public static boolean musicOn = true;		// Enables music.  Press 'm' to cycle track in game.
+	public static boolean basicMode = false;	// Hides complicated events, such as Solar Flares and Pirates
 	
-	// Player setup
+	// Player setup4
 	private void setPlayers() throws SlickException {
-		playerOne = new Fs(Values.BLUE_ID, this);
+		playerOne = new Flash(Values.BLUE_ID, this);
 		playerOne.setDifficultyRating(1);			
 		
 		playerTwo = new Heavy(Values.RED_ID, this);
@@ -142,14 +141,30 @@ public class Game extends BasicGameState
 
 	public static ArrayList<Unit> getEnemies(Player self) {
 		return getEnemies(self.getTeam());
-
 	}
 
+	public static ArrayList<Unit> getNeutral() {
+		return getNeutrals();
+	}
+	
+	public static ArrayList<Unit> getNeutrals() {
+		ArrayList<Unit> neutrals = new ArrayList<Unit>();
+
+		for (Unit a : Game.units) {
+			if (a.isAlive() && a.getTeam() == Values.NEUTRAL_ID && a.isTargetable()) {
+				neutrals.add(a);
+			}
+		}
+
+		return neutrals;
+	}
+
+	
 	public static ArrayList<Unit> getEnemies(int team) {
 		ArrayList<Unit> enemies = new ArrayList<Unit>();
 
 		for (Unit a : Game.units) {
-			if (a.isAlive() && a.getTeam() != Values.AMBIENT_ID && a.getTeam() != team && a.isTargetable()) {
+			if (a.isAlive() && a.getTeam() != team && a.isTargetable()) {
 				enemies.add(a);
 			}
 		}
@@ -218,7 +233,7 @@ public class Game extends BasicGameState
 		setPlayers();
 		playerOne.setStartingMinerals();
 		playerTwo.setStartingMinerals();
-
+		
 		gameOver = false;
 		timer = 0;
 		Data.clear();
@@ -247,7 +262,7 @@ public class Game extends BasicGameState
 		units.add(new Turret(alpha, true));
 		units.add(new Turret(beta, false));
 		units.add(new Turret(beta, true));
-
+	
 		scenario = new Scenario(this);
 		scenario.spawn();
 
@@ -267,6 +282,7 @@ public class Game extends BasicGameState
 		
 		if (scenario.hasNeutralBaseShip()) {
 			omega = scenario.getNeutralBaseShip();
+			System.out.println(omega);
 		}
 		else
 		{
@@ -280,6 +296,8 @@ public class Game extends BasicGameState
 		// Initialize Display Elements
 		display = new Display(alpha, beta);
 		c = new Camera(gc);
+		
+
 	}
 
 	public void leave(GameContainer gc, StateBasedGame sbg) {
@@ -349,25 +367,19 @@ public class Game extends BasicGameState
 	public void keyPressed(int key, char c) {
 		if (key == Input.KEY_1 && !gameOver) {
 			gameSpeed = 1;
-			sfxOn = true;
 		} else if (key == Input.KEY_2 && !gameOver) {
 			gameSpeed = 2;
-			sfxOn = true;
 
 		} else if (key == Input.KEY_3 && !gameOver) {
 			gameSpeed = 3;
-			sfxOn = true;
 
 		} else if (key == Input.KEY_4 && !gameOver) {
 			gameSpeed = 4;
-			sfxOn = true;
-		} else if (key == Input.KEY_4 && !gameOver) {
+		} else if (key == Input.KEY_5 && !gameOver) {
 			gameSpeed = 5;
-			sfxOn = true;
 
 		} else if (key == Input.KEY_0 && !gameOver) {
 			gameSpeed = 10;
-			sfxOn = true;
 
 		}
 	}
@@ -430,6 +442,20 @@ public class Game extends BasicGameState
 		screenCenterX = (float) (Values.RESOLUTION_X / Camera.getZoom() / 2 - Camera.getX());
 		screenCenterY = (float) (Values.RESOLUTION_Y / Camera.getZoom() / 2 - Camera.getY());
 
+		
+		if(Game.getTime() == 1 && !paused)
+		{
+			units.add(playerOne.buildMiner());
+			units.add(playerOne.buildMiner());
+			units.add(playerTwo.buildMiner());
+			units.add(playerTwo.buildMiner());
+		}
+
+	
+		//gc.setFullscreen(true);
+	
+		//System.out.println(gc.getHeight());
+		
 		if (!paused) {
 
 			for (int j = 0; j < gameSpeed; j++) {
@@ -467,10 +493,14 @@ public class Game extends BasicGameState
 					playerTwo.addLatency(duration);
 				}
 				
-				playerNeutral.update();
-				for (int i = 0; i < units.size(); i++) {
-					if (units.get(i).isAlive() && units.get(i).getOwner() == playerNeutral) {
-						units.get(i).update();
+	
+				if(playerNeutral != null)
+				{
+					playerNeutral.update();
+					for (int i = 0; i < units.size(); i++) {
+						if (units.get(i).isAlive() && units.get(i).getOwner() == playerNeutral) {
+							units.get(i).update();
+						}
 					}
 				}
 
@@ -499,8 +529,10 @@ public class Game extends BasicGameState
 				cleanup();
 			}
 		}
-		c.update();
+		c.update(gc);
 		display.update(units);
+		
+
 
 	}
 
@@ -526,7 +558,7 @@ public class Game extends BasicGameState
 			gameOver = true;
 			gameOverTimer = 0;
 			gameSpeed = 1;
-			gc.setTargetFrameRate(60);
+			gc.setTargetFrameRate(Values.FRAMES_PER_SECOND/2);
 
 			ArrayList<Unit> units = playerOne.getMyUnits();
 			for (Unit u : units) {
@@ -537,7 +569,7 @@ public class Game extends BasicGameState
 			gameOver = true;
 			gameOverTimer = 0;
 			gameSpeed = 1;
-			gc.setTargetFrameRate(60);
+			gc.setTargetFrameRate(Values.FRAMES_PER_SECOND/2);
 
 			ArrayList<Unit> units = playerTwo.getMyUnits();
 			for (Unit u : units) {
@@ -545,10 +577,10 @@ public class Game extends BasicGameState
 			}
 		}
 
-		if (gameOverTimer == 60) {
+		if (gameOverTimer == Values.FRAMES_PER_SECOND/2) {
 			paused = true;
 			gameOverTimer = 0;
-			gc.setTargetFrameRate(60);
+			gc.setTargetFrameRate(Values.FRAMES_PER_SECOND);
 		} else if (gameOver && !paused) {
 			gameOverTimer++;
 		}
@@ -571,10 +603,9 @@ public class Game extends BasicGameState
 		return id;
 	}
 
-	public void mouseMoved(int oldX, int oldY, int newX, int newY) {
-		if (!c.isAuto()) {
+	public void mouseMoved(int oldX, int oldY, int newX, int newY) 
+	{
 			Camera.shiftCamera(newX - oldX, newY - oldY);
-		}
 	}
 
 	public void addUnit(Unit u) throws SlickException {
@@ -638,7 +669,7 @@ public class Game extends BasicGameState
 		return p;
 	}
 
-	// for autocam
+	// for autocamera - not currently used
 	public static float getUnitDensity() {
 		Point center = getUnitCenter();
 		float totalDistance = 0;
@@ -654,7 +685,7 @@ public class Game extends BasicGameState
 		return density;
 	}
 
-	// for autocamera
+	// for autocamera - not currently used
 	public static Point getUnitCenterExcludeOutliers(Point trueCenter) {
 		Point p = new Point(0, 0);
 		long totalWeight = 0;

@@ -1,5 +1,7 @@
 package teams.starter.random;
 
+import java.util.ArrayList;
+
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
@@ -57,103 +59,102 @@ public class Random extends Player {
 		return new RandomSupport(this);
 	}
 
-	public void action() throws SlickException 
-	{
-		
+	public void action() throws SlickException {
+
 		// Research all the passive upgrades
+		
+		beginResearch(RaiderMissile.class);
+		beginResearch(RaiderEngine.class);
+		
+		beginResearch(RaiderPierce.class);
+		
 		beginResearch(MinerLaser.class);
 		beginResearch(MinerHull.class);
-		beginResearch(AssaultShield.class);
-		beginResearch(AssaultExplosive.class);
-		beginResearch(RaiderEngine.class);
-		beginResearch(RaiderPierce.class);
-		beginResearch(SpecialistReactor.class);
-		beginResearch(SpecialistKinetic.class);
-		beginResearch(SupportEnergy.class);
-		beginResearch(SupportFix.class);
-		beginResearch(SupportEnergy.class);
 		
-		// Always make 4 miners at the start
-		if(timer == 1)
-		{
-			addMinerToQueue();
-			addMinerToQueue();
-			addMinerToQueue();
-			addMinerToQueue();
-			addMinerToQueue();
-			addMinerToQueue();
-		}
-		for(int i = 0; i <100; i++) {
-			addMinerToQueue();
-		}
-		// Choose a new unit to produce and specify how many to build
-		if (count == 0) {
-			r = Utility.random(0, 5);
 
-			switch (r) {
-			case 0: // Raiders
-				count = 7;
-				break;
-			case 1: // Miners
-				count = 1;
-				break;
-			case 2: // Assault
-				count = 3;
-				break;
-			case 3: // Support
-				count = 2;
-				break;
-			case 4: // Specialist
-				count = 1;
-				break;
+		// Always make 4 miners at the start
+		if (countMyMiners() < 2) {
+			addMinerToQueue();
+		}
+		if ((countEnemyMiners() - countNeutralMiners()) > countMyMiners() && countMyMiners() < 15) {
+			addMinerToQueue();
+		}
+		addRaiderToQueue();
+
+	}
+
+	public Unit getMostVulerableEnemy(Class<? extends Unit> clazz) {
+
+		Unit bestUnit = null;
+
+		if (getEnemyUnits().isEmpty() || getEnemyUnitsExclude(Miner.class).isEmpty()) {
+			return null;
+		}
+
+		ArrayList<Unit> units = getEnemyUnitsExclude(Miner.class);
+
+		float totalX = 0;
+		float totalY = 0;
+
+		int averageY = 0;
+		int averageX = 0;
+
+		int maxDistance = 0;
+
+		for (Unit u : units) {
+			totalX += u.getCenterX();
+			totalY += u.getCenterY();
+
+			averageX = (int) (totalX / units.size());
+			averageY = (int) (totalY / units.size());
+		}
+
+		for (Unit u : getEnemyUnits(clazz)) {
+			if (u.getDistance(averageX, averageY) > maxDistance
+					&& (u.countEnemiesInRadius(1200) - u.getEnemiesInRadius(1200, Miner.class).size()) < 2) {
+				maxDistance = (int) u.getDistance(averageX, averageY);
+				bestUnit = u;
 			}
 		}
+		return bestUnit;
+	}
 
-		// Build units and count down to new selection
-		switch (r) {
-		case 0:
-			setMessageOne("Raiders Mode");
-			if (addRaiderToQueue())
-				count--;
-			break;
+	public ArrayList<Unit> getEnemyUnitsExclude(Class<? extends Unit> clazz) {
 
-		case 1:
-			setMessageOne("Miner Mode");
-			if (addMinerToQueue())
-				count--;
-			break;
+		ArrayList<Unit> units = new ArrayList<Unit>();
 
-		case 2:
-			setMessageOne("Assault Mode");
-			if (addAssaultToQueue())
-				count--;
-			break;
-
-		case 3:
-			setMessageOne("Support Mode");
-			if (addSupportToQueue())
-				;
-				count--;
-			break;
-
-		case 4:
-			setMessageOne("Specialist Mode");
-			if (addSpecialistToQueue())
-				count--;
-			break;
-
+		if (clazz != Specialist.class && !getEnemyUnits(Specialist.class).isEmpty()) {
+			for (Unit u : getEnemyUnits(Specialist.class)) {
+				units.add(u);
+			}
 		}
-
-		for (Unit u : getAllies()) {
-			setMessageTwo("Attack");
-			u.setOrder(Order.ATTACK);
+		if (clazz != Raider.class && !getEnemyUnits(Raider.class).isEmpty()) {
+			for (Unit u : getEnemyUnits(Raider.class)) {
+				units.add(u);
+			}
 		}
+		if (clazz != Assault.class && !getEnemyUnits(Assault.class).isEmpty()) {
+			for (Unit u : getEnemyUnits(Assault.class)) {
+				units.add(u);
+			}
+		}
+		if (clazz != Support.class && !getEnemyUnits(Support.class).isEmpty()) {
+			for (Unit u : getEnemyUnits(Support.class)) {
+				units.add(u);
+			}
+		}
+		if (clazz != Miner.class && !getEnemyUnits(Miner.class).isEmpty()) {
+			for (Unit u : getEnemyUnits(Miner.class)) {
+				units.add(u);
+			}
+		}
+		return units;
 	}
 
 	@Override
 	public void draw(Graphics g) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

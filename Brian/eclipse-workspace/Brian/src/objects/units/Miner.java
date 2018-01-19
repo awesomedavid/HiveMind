@@ -16,8 +16,8 @@ import objects.base.Player;
 import objects.upgrades.MinerHull;
 import objects.upgrades.MinerLaser;
 import objects.upgrades.MinerMine;
-import ui.Camera;
-import ui.Images;
+import ui.display.Camera;
+import ui.display.Images;
 import weapons.MinerAttack;
 
 public abstract class Miner extends Unit {
@@ -57,7 +57,7 @@ public abstract class Miner extends Unit {
 		acceleration = Values.MINER_ACCELERATION;
 		capacity = Values.MINER_CAPACITY;
 		value = Values.MINER_COST;
-		combatValue = value;
+		combatValue = 0;
 		curArmor = Values.MINER_ARMOR;
 		baseArmor = Values.MINER_ARMOR;
 		mining = false;
@@ -102,7 +102,22 @@ public abstract class Miner extends Unit {
 		else return basicAttack.getRange();
 	}
 
+	final public boolean hasOpenAsteroid()
+	{
+		if (asteroids.isEmpty())
+		{
+			return false;
+		}
+		for (Asteroid a : asteroids) {
+			float d = Utility.distance(this, a);
 
+			if (a.hasMiningSlots() && a.hasMinerals()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	final public Asteroid nearestOpenAsteroid() {
 		if (asteroids.isEmpty())
 			return null;
@@ -150,8 +165,6 @@ public abstract class Miner extends Unit {
 			g.setColor(new Color(255, 255, 100));
 			g.fillRect(x, y - 19, load / capacity * image.getWidth() * scale, 5);
 			
-
-
 		}
 		
 		if(isAlive() && Math.random() < .15 && mining)
@@ -212,8 +225,8 @@ public abstract class Miner extends Unit {
 			else
 				load += rate;
 
-			target.extractMinerals(Values.MINER_RATE);
-
+			target.extractMinerals(rate);
+			
 			if (timer % 30 <= 15) {
 				image = sheet.getSprite(2, team);
 			}
@@ -367,7 +380,7 @@ public abstract class Miner extends Unit {
 		if (!isMining() && ability.getTimer() == 0  && hasMinerals(Values.MINER_UPGRADE_MINE_DROP_MINERAL_COST)) 
 		{
 			startDroppingMine();
-			dropMineLocation = getLocation();
+			dropMineLocation = getPosition();
 		}
 	}
 

@@ -10,7 +10,7 @@ import objects.base.Player;
 import objects.upgrades.AssaultAegis;
 import objects.upgrades.AssaultExplosive;
 import objects.upgrades.AssaultShield;
-import ui.Images;
+import ui.display.Images;
 import weapons.AssaultAttack;
 
 public abstract class Assault extends Unit {

@@ -9,9 +9,9 @@ import core.Utility;
 import core.Values;
 import objects.units.BaseShip;
 import objects.units.Miner;
-import ui.Camera;
-import ui.Fonts;
-import ui.Images;
+import ui.display.Camera;
+import ui.display.Fonts;
+import ui.display.Images;
 
 public class Asteroid extends Ambient 
 {
@@ -41,6 +41,9 @@ public class Asteroid extends Ambient
 		turnSpeed = Utility.random(-MAX_ROTATION, MAX_ROTATION);
 		minerals = Values.ASTEROID_MINERALS_BASE * size;
 
+		x = x - w/2;
+		y = y - h/2;
+		
 		miners = new Miner[size];
 
 		this.xSpeed = xSpeed;
@@ -155,7 +158,8 @@ public class Asteroid extends Ambient
 	}
 
 	public static boolean isValidSpawn(int x, int y) {
-		return !isSpawnNearBaseShip(x, y, Game.getBaseShip(Values.BLUE_ID)) && !isSpawnNearBaseShip(x, y, Game.getBaseShip(Values.RED_ID));
+		return !isSpawnNearBaseShip(x, y, Game.getBaseShip(Values.BLUE_ID)) && 
+				!isSpawnNearBaseShip(x, y, Game.getBaseShip(Values.RED_ID));
 	}
 
 	public static boolean isSpawnNearBaseShip(int xPos, int yPos, BaseShip b) {

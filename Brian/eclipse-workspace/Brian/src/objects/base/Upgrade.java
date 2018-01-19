@@ -5,7 +5,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 
 import core.Values;
-import ui.Images;
+import ui.display.Images;
 
 public class Upgrade 
 {

@@ -13,20 +13,18 @@ import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
-import ui.Audio;
-import ui.Fonts;
-import ui.Images;
+import ui.display.Fonts;
+import ui.display.Images;
+import ui.sound.Audio;
 
 public class Splash extends BasicGameState 
 {
-	StateBasedGame sbg;
-	GameContainer gc;
-	Image splash;
-	Image splashScaled;
-	int id;
-	int step;
-	float progress = 0;
-	String message = "";
+	private StateBasedGame sbg;
+	private Image splash;
+	private Image splashScaled;
+	private int id;
+	private int step;
+	private String message = "";
 	
 	Splash(int id)
 	{
@@ -113,7 +111,6 @@ public class Splash extends BasicGameState
 		sbg.enterState(Engine.GAME_ID, 
 				new FadeOutTransition(Color.black, Values.TRANSITION_FADE_TIME_SLOW), 
 				new FadeInTransition(Color.black, Values.TRANSITION_FADE_TIME_SLOW));
-		
 
 		}
 	}

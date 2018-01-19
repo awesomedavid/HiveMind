@@ -11,15 +11,15 @@ import org.newdawn.slick.state.transition.FadeInTransition;
 import org.newdawn.slick.state.transition.FadeOutTransition;
 
 import data.Data;
-import ui.Fonts;
-import ui.Images;
+import ui.display.Fonts;
+import ui.display.Images;
 
 
 public class End extends BasicGameState 
 {
-	StateBasedGame sbg;
-	GameContainer gc;
-	int id;
+	private StateBasedGame sbg;
+	private GameContainer gc;
+	private int id;
 
 	
 	End(int id)

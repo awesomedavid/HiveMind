@@ -20,7 +20,7 @@ final public class MissileExplosion extends AbilityArea
 	{
 		if(charges > 0)
 		{
-			super.use(owner.getLocation());
+			super.use(owner.getPosition());
 			charges--;
 
 			if(owner != null)
@@ -31,7 +31,6 @@ final public class MissileExplosion extends AbilityArea
 			}
 		}
 	}
-
 
 	public void hit(Unit u)
 	{

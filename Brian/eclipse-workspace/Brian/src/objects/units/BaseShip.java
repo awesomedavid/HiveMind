@@ -9,8 +9,8 @@ import org.newdawn.slick.geom.Point;
 import core.Game;
 import core.Values;
 import objects.base.Player;
-import ui.Fonts;
-import ui.Images;
+import ui.display.Fonts;
+import ui.display.Images;
 
 public final class BaseShip extends Unit {
 	float buildQueueTime = 0;
@@ -32,15 +32,17 @@ public final class BaseShip extends Unit {
 
 		
 		if (p.getTeam() == Values.BLUE_ID) {
-			this.x = -Values.BASE_SHIP_X_POSITION - w / 2;
+			this.x = -Values.BASE_SHIP_X_POSITION - w / 2 ;
 			this.y = Values.BASE_SHIP_Y_POSITION - h / 2;
 		} else if (p.getTeam() == Values.RED_ID) {
 			this.x = Values.BASE_SHIP_X_POSITION - w / 2;
 			this.y = Values.BASE_SHIP_Y_POSITION - h / 2;
 		} else {
-			this.x = 0;
-			this.y = PIRATE_Y_POSITION - h / 2;
+			this.x = - w / 2;
+			this.y = NEUTRAL_Y_POSITION - h / 2;
+
 		}
+		
 
 		curHealth = 10000;
 		maxHealth = 10000;
@@ -65,6 +67,22 @@ public final class BaseShip extends Unit {
 	public boolean driftUp()
 	{
 		return driftUp;
+	}
+	
+	public float getSpeedX()
+	{
+		if (getTeam() == Values.BLUE_ID)
+		{
+			return BASE_SHIP_SPEED;
+		}
+		else if (getTeam() == Values.RED_ID)
+		{
+			return -BASE_SHIP_SPEED;
+		}
+		else
+		{
+			return 0;
+		}
 	}
 	public void update() {
 		super.update();

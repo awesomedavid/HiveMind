@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Point;
 import org.newdawn.slick.geom.Rectangle;
@@ -35,8 +36,8 @@ import objects.ambient.Hazard;
 import objects.ambient.Nebula;
 import objects.base.GameObject;
 import objects.base.Player;
-import ui.Audio;
-import ui.Camera;
+import ui.display.Camera;
+import ui.sound.Audio;
 
 public abstract class Unit extends GameObject implements Values {
 	// Public Constants
@@ -54,6 +55,7 @@ public abstract class Unit extends GameObject implements Values {
 	protected float energyRegenRate = 0;
 	protected boolean alive = true;
 	protected int hitTimer = 0;
+	protected int healTimer = 0;
 	protected boolean wasHit = false;
 	protected float maxSpeed = 0;
 	protected float curSpeed = 0;
@@ -64,7 +66,9 @@ public abstract class Unit extends GameObject implements Values {
 	protected float maxShield = 0;
 	protected float shieldRegenRate = 0;
 	protected float dodgeChance = 0;
-
+	protected Player lastHitter;
+	protected boolean docked = false;
+	
 	protected int value;
 	protected float combatValue;
 	private Order myOrder;
@@ -72,7 +76,8 @@ public abstract class Unit extends GameObject implements Values {
 	private Point targetPoint;
 
 	protected Ability ability;
-
+	
+	
 	protected ArrayList<Unit> enemies;
 	protected ArrayList<Unit> allies;
 	protected ArrayList<Asteroid> asteroids;
@@ -133,7 +138,8 @@ public abstract class Unit extends GameObject implements Values {
 	abstract public void ability(Unit u);
 
 	abstract public void ability();
-
+	
+	
 	// Accessor Methods
 
 	abstract public float getRange();
@@ -181,6 +187,10 @@ public abstract class Unit extends GameObject implements Values {
 	public boolean isCombusted() {
 		return isCombusted;
 	}
+	
+	public boolean isDocked()	{
+		return docked;
+	}
 
 	public boolean hasDamageReduction() {
 		return damageReduction > 0;
@@ -190,6 +200,11 @@ public abstract class Unit extends GameObject implements Values {
 		return damageReduction;
 	}
 
+	public float getAcceleration()
+	{
+		return acceleration;
+	}
+	
 	public boolean hasShield() {
 		return maxShield > 0;
 	}
@@ -285,7 +300,27 @@ public abstract class Unit extends GameObject implements Values {
 	public int getHitTimer() {
 		return hitTimer;
 	}
+	
+	public int getHealTimer() {
+		return healTimer;
+	}
 
+	public void setHealed()
+	{
+		healTimer = 0;
+	}
+	
+	public boolean recentlyHealed()
+	{
+		return getHealTimer() <= Values.SUPPORT_HEAL_COOLDOWN;
+	}
+	
+	public boolean recentlyHealed(int frames)
+	{
+		return getHealTimer() <= frames;
+	}
+	
+	
 	public int getTimer() {
 		return timer;
 	}
@@ -346,7 +381,7 @@ public abstract class Unit extends GameObject implements Values {
 	}
 
 	public float getDistance(Point p) {
-		return Utility.distance(this.getLocation(), p);
+		return Utility.distance(this.getPosition(), p);
 	}
 
 	public Point getSpawn(Player p) {
@@ -372,6 +407,22 @@ public abstract class Unit extends GameObject implements Values {
 			return null;
 	}
 
+	public Color getColor()
+	{
+		if(getTeam() == Values.BLUE_ID)
+		{
+			return Values.BLUE;
+		}
+		else if(getTeam() == Values.RED_ID)
+		{
+			return Values.RED;
+		}
+		else
+		{
+			return Values.PURPLE;
+		}
+	}
+	
 	// ALLY
 
 	public Unit nearestAlly() {
@@ -691,6 +742,8 @@ public abstract class Unit extends GameObject implements Values {
 
 	public void addMinerals(float amount) {
 		p.addMinerals(amount);
+		p.advanceResearch((int) (amount * RESEARCH_POINT_PER_MINERAL_MINED));
+		
 	}
 
 	public boolean hasEnergy(float amount) {
@@ -705,6 +758,7 @@ public abstract class Unit extends GameObject implements Values {
 
 	public void regainHealth(float amount) {
 
+
 		if (curHealth + amount > maxHealth) {
 			curHealth = maxHealth;
 			Data.addEvent(new HealEvent(getTeam(), Game.getTime(), Math.round(maxHealth - curHealth)));
@@ -712,6 +766,8 @@ public abstract class Unit extends GameObject implements Values {
 			curHealth += amount;
 			Data.addEvent(new HealEvent(getTeam(), Game.getTime(), Math.round(amount)));
 		}
+		
+		healTimer = 0;
 
 	}
 
@@ -745,7 +801,7 @@ public abstract class Unit extends GameObject implements Values {
 		int dmgData = 0;
 		int blockData = 0;
 		int attemptData = Math.round(amount);
-
+		
 		if (!isInvulnerable) {
 			float attackRoll = Utility.random(0, 100);
 			float dodgeChanceMod = 1;
@@ -763,6 +819,7 @@ public abstract class Unit extends GameObject implements Values {
 
 				hitTimer = 0;
 				wasHit = true;
+				lastHitter = source;
 
 				// Track the data after damageReduction, but before amount is
 				// modified
@@ -792,10 +849,12 @@ public abstract class Unit extends GameObject implements Values {
 				blockData = Math.round(amount);
 			}
 
-			Data.addEvent(new DamageEvent(source.getTeam(), Game.getTime(), dmgData));
-			Data.addEvent(new DamageAttemptEvent(source.getTeam(), Game.getTime(), attemptData));
-			Data.addEvent(new BlockEvent(source.getTeam(), Game.getTime(), blockData));
-
+			if(source != null)
+			{
+				Data.addEvent(new DamageEvent(source.getTeam(), Game.getTime(), dmgData));
+				Data.addEvent(new DamageAttemptEvent(source.getTeam(), Game.getTime(), attemptData));
+				Data.addEvent(new BlockEvent(source.getTeam(), Game.getTime(), blockData));
+			}
 		}
 	}
 
@@ -812,6 +871,8 @@ public abstract class Unit extends GameObject implements Values {
 			}
 			hitTimer = 0;
 			wasHit = true;
+			lastHitter = source;
+			
 			// Track the data after damageReduction, but before amount is
 			// modified
 			if (curShield > amount) {
@@ -838,9 +899,12 @@ public abstract class Unit extends GameObject implements Values {
 				loseHealth(amount);
 			}
 
-			Data.addEvent(new DamageAttemptEvent(source.getTeam(), Game.getTime(), attemptData));
-			Data.addEvent(new DamageEvent(source.getTeam(), Game.getTime(), dmgData));
-			Data.addEvent(new BlockEvent(source.getTeam(), Game.getTime(), blockData));
+			if(source != null)
+			{
+				Data.addEvent(new DamageAttemptEvent(source.getTeam(), Game.getTime(), attemptData));
+				Data.addEvent(new DamageEvent(source.getTeam(), Game.getTime(), dmgData));
+				Data.addEvent(new BlockEvent(source.getTeam(), Game.getTime(), blockData));
+			}
 
 		}
 	}
@@ -869,6 +933,7 @@ public abstract class Unit extends GameObject implements Values {
 
 				hitTimer = 0;
 				wasHit = true;
+				lastHitter = source;
 				// Track the data after damageReduction, but before amount is
 				// modified
 				if (curShield > amount) {
@@ -896,10 +961,12 @@ public abstract class Unit extends GameObject implements Values {
 				blockData = Math.round(amount);
 			}
 
-			Data.addEvent(new DamageEvent(source.getTeam(), Game.getTime(), dmgData));
-			Data.addEvent(new DamageAttemptEvent(source.getTeam(), Game.getTime(), attemptData));
-			Data.addEvent(new BlockEvent(source.getTeam(), Game.getTime(), blockData));
-
+			if(source != null)
+			{
+				Data.addEvent(new DamageEvent(source.getTeam(), Game.getTime(), dmgData));
+				Data.addEvent(new DamageAttemptEvent(source.getTeam(), Game.getTime(), attemptData));
+				Data.addEvent(new BlockEvent(source.getTeam(), Game.getTime(), blockData));
+			}
 		}
 	}
 
@@ -949,6 +1016,7 @@ public abstract class Unit extends GameObject implements Values {
 		}
 
 		hitTimer++;
+		healTimer++;
 
 		if (sheet != null && sheet.getSprite(0, team) != null) {
 			image = sheet.getSprite(0, team);
@@ -1109,10 +1177,10 @@ public abstract class Unit extends GameObject implements Values {
 			if (getTeam() == Values.RED_ID)
 				g.setColor(new Color(255, 175, 100, 255));
 
-			float width = (float) (w * 1.5);
-			float height = (float) (h * 1.5);
+			float width = (float) (w * 1.75);
+			float height = (float) (h * 1.75);
 			g.setLineWidth(3);
-			g.drawOval(getCenterX() - width / 2, getCenterY() - height / 2, width, height);
+			g.drawOval(getCenterX() - width / 2, getCenterY() - height / 2, width, height, 6);
 			g.resetLineWidth();
 			// Middle
 
@@ -1121,25 +1189,32 @@ public abstract class Unit extends GameObject implements Values {
 			if (getTeam() == Values.RED_ID)
 				g.setColor(new Color(255, 150, 100, 150));
 
-			width = (float) (w * 1.5);
-			height = (float) (h * 1.5);
+			width = (float) (w * 1.75);
+			height = (float) (h * 1.75);
 
-			g.fillOval(getCenterX() - width / 2, getCenterY() - height / 2, width, height);
+			g.fillOval(getCenterX() - width / 2, getCenterY() - height / 2, width, height, 6);
 
 		}
+		
+		
+
+	
 
 		// Shield
 		else if (hasShield() && getCurShield() > 0) {
 
+				
 			if (getTeam() == Values.BLUE_ID)
 				g.setColor(new Color(75, 150, 255, 150));
 			if (getTeam() == Values.RED_ID)
 				g.setColor(new Color(255, 100, 100, 150));
 
 			// Max Shield
-			float width = (float) (w * 1.5);
-			float height = (float) (h * 1.5);
-			g.drawOval(getCenterX() - width / 2, getCenterY() - height / 2, width, height);
+			float width = (float) (w * 1.75);
+			float height = (float) (h * 1.75);
+			
+			
+			g.drawOval(getCenterX() - width / 2, getCenterY() - height / 2, width, height, 6);
 
 			if (getTeam() == Values.BLUE_ID)
 				g.setColor(new Color(75, 150, 255, 50));
@@ -1147,9 +1222,10 @@ public abstract class Unit extends GameObject implements Values {
 				g.setColor(new Color(255, 100, 100, 50));
 
 			// Current Shield
-			width = (float) (w * curShield / maxShield * 1.5);
-			height = (float) (h * curShield / maxShield * 1.5);
-			g.fillOval(getCenterX() - width / 2, getCenterY() - height / 2, width, height);
+			width = (float) (w * curShield / maxShield * 1.75);
+			height = (float) (h * curShield / maxShield * 1.75);
+			
+			g.fillOval(getCenterX() - width / 2, getCenterY() - height / 2, width, height, 6);
 
 		}
 
@@ -1222,9 +1298,9 @@ public abstract class Unit extends GameObject implements Values {
 		else
 			accelerate(acceleration);
 
-			image = sheet.getSprite(1, team);
+		image = sheet.getSprite(1, team);
 		
-		
+	
 
 		canMove = false;
 
@@ -1235,7 +1311,6 @@ public abstract class Unit extends GameObject implements Values {
 			return;
 
 		changeSpeed(amount, theta);
-
 	}
 
 	public final void changeSpeed(float amount, float theta) {
@@ -1388,6 +1463,12 @@ public abstract class Unit extends GameObject implements Values {
 		turnTo(o);
 		accelerate();
 	}
+	
+	public void slowMovement(float percent)
+	{
+		xSpeed *= 1-percent;
+		ySpeed *= 1-percent;
+	}
 
 	public void haltMovement() {
 		xSpeed = 0;
@@ -1409,6 +1490,30 @@ public abstract class Unit extends GameObject implements Values {
 
 	}
 
+	public void dock()
+	{
+		if(onBase())
+		{
+			xSpeed = getHomeBase().getSpeedX();
+			ySpeed = 0;
+			canMove = false;
+			canAct = false;
+			docked = true;
+		}
+
+	}
+	
+
+	public void launch()
+	{
+		if(onBase() && docked)
+		{
+			canMove = true;
+			canAct = true;
+			docked = false;
+		}
+	}
+	
 	public void setOrder(Order o) {
 		myOrder = o;
 	}
@@ -1437,11 +1542,26 @@ public abstract class Unit extends GameObject implements Values {
 	final public void die() {
 		alive = false;
 		curHealth = 0;
+		if(lastHitter != null)
+		{
+			lastHitter.advanceResearch(value * Values.RESEARCH_POINT_PER_UNIT_COST);
+		}
+		
+		if(this == Game.getBaseShip(NEUTRAL_ID))
+		{
+			lastHitter.addMinerals(NEUTRAL_BASE_MINERAL_REWARD);
+		}
+		
 		Game.addAnimation(new Boom(getCenterX(), getCenterY(), w / Boom.BOOM_SIZE));
-
-		Audio.boom[Utility.random(0, 2)].play(getPosition(), (float) (1.2f - .05 * this.value), this.value / 10f);
+		
+		Audio.playBoom(getPosition(), (float) (1.2f - .05 * this.value), this.value / 10f);
 		deathTrigger();
 		Data.addEvent(new DeathEvent(getTeam(), Game.getTime(), getValue(), getPosition()));
+	}
+	
+	public boolean onBase()
+	{
+		return getDistance(getHomeBase()) <= Values.ASTROID_BASE_SHIP_DOCK_RANGE;
 	}
 
 	abstract protected void deathTrigger();

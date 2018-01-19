@@ -11,7 +11,7 @@ import effects.DamageArea;
 import effects.Slowed;
 import objects.units.Unit;
 import objects.upgrades.AssaultExplosive;
-import ui.Audio;
+import ui.sound.Audio;
 
 public class AssaultAttack extends Weapon {
 	float splashRadius;
@@ -36,8 +36,8 @@ public class AssaultAttack extends Weapon {
 			animation(a, getDelay(a));
 			owner.actionComplete();
 			shotTimer = cooldown;
-			Audio.blast.play(owner.getPosition(), Utility.random(.9f, 1.1f), 1);
-
+			Audio.playBlast(owner.getPosition());
+			
 			if (owner.getOwner().hasResearch(AssaultExplosive.class)) {
 				splashRadius = Values.ASSAULT_ATTACK_SPLASH_RADIUS * Values.ASSAULT_UPGRADE_EXPLOSIVE_SPLASH_RADIUS_MOD;
 			}
@@ -53,13 +53,14 @@ public class AssaultAttack extends Weapon {
 					if (owner.getOwner().hasResearch(AssaultExplosive.class)) {
 						u.addEffect(new Slowed(u, owner.getOwner(), delay, Values.ASSAULT_UPGRADE_EXPLOSIVE_SLOW_DURATION,
 								Values.ASSAULT_UPGRADE_EXPLOSIVE_SPEED_REDUCTION));
+						u.slowMovement(Values.ASSAULT_UPGRADE_EXPLOSIVE_SPEED_REDUCTION);
 					}
 					else
 					{
-						if (owner.getOwner().hasResearch(AssaultExplosive.class)) {
 							u.addEffect(new Slowed(u, owner.getOwner(), delay, Values.ASSAULT_SLOW_DURATION,
 									Values.ASSAULT_SPEED_REDUCTION));
-						}
+							
+							u.slowMovement(Values.ASSAULT_SPEED_REDUCTION);
 					}
 					Game.addAnimation(new AnimAssaultSplash(owner, a, delay, splashRadius));
 

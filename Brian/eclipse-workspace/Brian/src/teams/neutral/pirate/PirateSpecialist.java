@@ -33,51 +33,16 @@ public class PirateSpecialist extends Specialist {
 
 	}
 
-	@Override
-	protected void attack() {
-		// TODO Auto-generated method stub
+	protected void attack() 	 {	}
+	protected void defend()		 {	}
+	protected void guard() 		 {	}
+	protected void rally()		 {	}
+	protected void skirmish() 	 {	}
+	protected void special() 	 {	}
+	protected void run() 		 {  }
+	
 
-	}
-
-	@Override
-	protected void defend() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected void guard() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected void skirmish() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected void rally() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected void special() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected void run() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void draw(Graphics g) {
-		// TODO Auto-generated method stub
 		
 	}
 

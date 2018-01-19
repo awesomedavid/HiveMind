@@ -35,11 +35,16 @@ public class Engine extends StateBasedGame
 
 	public static void main(String[] args) 
 	{
+
+		
 		try {
 			AppGameContainer appgc = new AppGameContainer(new Engine("Project Hivemind"));
+			System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");
 
-			appgc.setDisplayMode(Values.RESOLUTION_X, Values.RESOLUTION_Y, true);
+		
+			appgc.setDisplayMode(Values.RESOLUTION_X, Values.RESOLUTION_Y, false);
 			appgc.setTargetFrameRate(Values.FRAMES_PER_SECOND);
+		//	System.getProperties().list(System.out);
 			appgc.start();
 			appgc.setVSync(true);
 

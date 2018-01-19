@@ -3,10 +3,12 @@ package scenario;
 import core.Utility;
 
 public enum Adjective {
-	SPARSE, AVERAGE, POOR, BARREN, RICH, ABUNDANT,  // Basic effects
+	NORMAL, AVERAGE,								// No effects
+	SPARSE, POOR, BARREN, RICH, ABUNDANT,  			// Asteroid number effects
+	DENSE,											// Asteroid location effects
 	HIDDEN, SHROUDED, 								// Nebulae
 	UNSTABLE, LEGENDARY, 							// Star / Pulsar
-	RELENTLESS;										// Neutrals
+	READY, RESPECTFUL, RELENTLESS;					// Factions
 	
 
 	// Legendary --> Doubles the effect of the noun... 2x damage star, etc ?
@@ -15,12 +17,53 @@ public enum Adjective {
 		return Adjective.values()[(Utility.random(Adjective.values().length))];
 	}
 	
-	public static Adjective getBasic()
+	public static Adjective getBasicAdjective()
 	{
-		Adjective[] nouns = {Adjective.SPARSE, Adjective.AVERAGE, Adjective.POOR, Adjective.RICH, Adjective.ABUNDANT, Adjective.BARREN};
-		return nouns[Utility.random(nouns.length)];
+		Adjective[] adjective = {Adjective.NORMAL, Adjective.AVERAGE, Adjective.SPARSE, Adjective.POOR, Adjective.RICH, Adjective.ABUNDANT, Adjective.BARREN};
+		return adjective[Utility.random(adjective.length)];
+	}
+	
+	public static Adjective getAsteroidAdjective()
+	{
+		Adjective[] adjective = {Adjective.NORMAL, Adjective.AVERAGE, Adjective.SPARSE, Adjective.POOR, Adjective.RICH, Adjective.ABUNDANT, Adjective.BARREN, 
+								 Adjective.DENSE};
+		return adjective[Utility.random(adjective.length)];
+	}
+	
+	public static Adjective getNebulaAdjective()
+	{
+		Adjective[] adjective = {Adjective.NORMAL, Adjective.AVERAGE, Adjective.POOR, Adjective.RICH, Adjective.ABUNDANT, Adjective.BARREN, 
+								Adjective.HIDDEN, Adjective.SHROUDED};
+		return adjective[Utility.random(adjective.length)];
+	}
+	
+	public static Adjective getAsteroidBeltAdjective()
+	{
+		Adjective[] adjective = {Adjective.NORMAL, Adjective.AVERAGE, Adjective.SPARSE, Adjective.POOR, Adjective.RICH, Adjective.ABUNDANT, Adjective.BARREN, 
+								 Adjective.LEGENDARY};
+		return adjective[Utility.random(adjective.length)];
 	}
 
+
+	public static Adjective getHazardAdjective()
+	{
+		Adjective[] adjective = {Adjective.NORMAL, Adjective.AVERAGE, Adjective.LEGENDARY, Adjective.UNSTABLE, Adjective.HIDDEN, Adjective.SHROUDED};
+		return adjective[Utility.random(adjective.length)];
+	}
+
+	
+	public static Adjective getPirateAdjective()
+	{
+		Adjective[] adjective = {Adjective.NORMAL, Adjective.AVERAGE, Adjective.READY, Adjective.RELENTLESS, Adjective.RESPECTFUL, Adjective.HIDDEN, Adjective.SHROUDED};
+		return adjective[Utility.random(adjective.length)];
+	}
+	
+	
+	public static Adjective getCollectorsAdjective()
+	{
+		Adjective[] adjective = {Adjective.NORMAL, Adjective.AVERAGE, Adjective.HIDDEN, Adjective.SHROUDED};
+		return adjective[Utility.random(adjective.length)];
+	}
 
 	public String toString() {
 		String word = super.toString().toLowerCase();
@@ -37,42 +80,6 @@ public enum Adjective {
 
 		return word;
 	}
-	
-	public static Noun getLegendaryNoun()
-	{
-		switch (Utility.random(4)) {
-		case 0:
-			return Noun.STAR;
-		case 1:
-			return Noun.PULSAR;
-		case 2:
-			return Noun.ASTEROID_BELT;
-		case 3:
-			return Noun.MOON;
-		default:
-			return Noun.VOID;	
-		}
-	}
-	
-	public static Noun getUnstableNoun()
-	{
-		switch (Utility.random(2)) {
-		case 0:
-			return Noun.STAR;
-		case 1:
-			return Noun.PULSAR;
-		default:
-			return Noun.VOID;	
-		}
-	}
-	
-	public static Noun getRelentlessNoun()
-	{
-		switch (Utility.random(1)) {
-		case 0:
-			return Noun.PIRATES;		// doesn't work though!
-		default:
-			return Noun.VOID;	
-		}
-	}
 }
+	
+

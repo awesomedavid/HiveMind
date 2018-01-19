@@ -7,7 +7,7 @@ import org.newdawn.slick.geom.Point;
 import abilities.MineExplosion;
 import core.Values;
 import objects.base.Player;
-import ui.Images;
+import ui.display.Images;
 
 public final class Mine extends Unit 
 {

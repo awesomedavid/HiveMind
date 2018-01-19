@@ -22,8 +22,6 @@ public class SwarmRaider extends Raider {
 		Unit a = nearestEnemy();
 		shoot(a);
 		ability(a);
-		
-
 	}
 	
 	protected void engageNearby()
@@ -65,8 +63,6 @@ public class SwarmRaider extends Raider {
 		
 		engageNearby();
 		
-
-		
 		Nebula neb = nearestNebula();
 		if(neb != null)
 		{
@@ -74,7 +70,7 @@ public class SwarmRaider extends Raider {
 		}
 		else
 		{
-			moveTo(-3000, 0);
+			moveTo(0, -3000);
 		}
 
 

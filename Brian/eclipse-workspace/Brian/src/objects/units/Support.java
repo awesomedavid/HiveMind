@@ -10,7 +10,7 @@ import objects.base.Player;
 import objects.upgrades.SupportEMP;
 import objects.upgrades.SupportEnergy;
 import objects.upgrades.SupportFix;
-import ui.Images;
+import ui.display.Images;
 import weapons.SupportHeal;
 
 public abstract class Support extends Unit {
@@ -56,6 +56,10 @@ public abstract class Support extends Unit {
 		else return basicAttack.getRange();
 	}
 
+	public boolean canHeal(Unit target)
+	{
+		return target != null && target.getHealTimer() < Values.SUPPORT_HEAL_COOLDOWN;
+	}
 
 	public void update() {
 		super.update();
@@ -108,12 +112,18 @@ public abstract class Support extends Unit {
 		if (u == null)
 			return;
 		turnTo(u);
-		basicAttack.use(u);
+		
+//		System.out.println(u.getHealTimer());
+		if(u.getHealTimer() >= Values.SUPPORT_HEAL_COOLDOWN)
+		{			
+			basicAttack.use(u);
+		}
 	}
 
 	public void shoot() 
 	{
-		shoot(getTargetUnit());
+		Unit u = getTargetUnit();
+		shoot(u);
 	}
 	
 	// ability is close burst EMP

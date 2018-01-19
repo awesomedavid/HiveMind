@@ -121,11 +121,5 @@ public abstract class GameObject {
 		return ySpeed;
 	}
 
-	public Point getLocation()
-	{
-		return new Point(getCenterX(), getCenterY());
-	}
-
-
 
 }

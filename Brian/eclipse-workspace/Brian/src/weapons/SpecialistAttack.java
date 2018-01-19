@@ -11,7 +11,7 @@ import effects.Stunned;
 import objects.units.Miner;
 import objects.units.Unit;
 import objects.upgrades.SpecialistKinetic;
-import ui.Audio;
+import ui.sound.Audio;
 
 public class SpecialistAttack extends WeaponBeam {
 	public SpecialistAttack(Unit owner) {
@@ -43,7 +43,10 @@ public class SpecialistAttack extends WeaponBeam {
 			
 			owner.loseEnergy(Values.SPECIALIST_ATTACK_ENERGY_COST);
 			
-			Audio.laser[Utility.random(0, 2)].play(owner.getPosition(), .7f, 1f);	
+			if(Game.sfxOn)
+			{
+				Audio.playLaser(owner.getPosition());
+			}
 			
 			// owner.reverse(Values.RAIDER_ATTACK_RECOIL);
 			owner.addEffect(new Locked(owner, owner.getOwner(), 1, Values.SPECIALIST_ATTACK_LOCK_TIME));

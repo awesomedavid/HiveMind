@@ -1,16 +1,23 @@
 package objects.units;
 
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.SpriteSheet;
 import org.newdawn.slick.geom.Point;
 
 import abilities.LaunchMissile;
+import animations.AnimationSpark;
+import core.Game;
 import core.Utility;
 import core.Values;
 import objects.base.Player;
 import objects.upgrades.AssaultExplosive;
 import objects.upgrades.RaiderEngine;
 import objects.upgrades.RaiderMissile;
-import ui.Images;
+import ui.display.Camera;
+import ui.display.Images;
 import weapons.RaiderAttack;
 
 public abstract class Raider extends Unit {
@@ -43,6 +50,7 @@ boolean pierceUpgraded = false;
 		this.x = x - w;
 		this.y = y - h;
 	}
+
 
 
 	public float getRange() 
@@ -79,6 +87,15 @@ boolean pierceUpgraded = false;
 		}
 		
 		
+//		if(hasMissile())
+//		{
+//			setHighlight(true);
+//		}
+//		else
+//		{
+//			setHighlight(false);
+//		}
+		
 		basicAttack.update();
 
 		if (canAct()) {
@@ -110,8 +127,14 @@ boolean pierceUpgraded = false;
 
 	public void shoot() {
 		shoot(getTargetUnit());
+		
+	
 	}
 
+	public boolean hasMissile()
+	{
+		return ability != null && ability instanceof LaunchMissile && ((LaunchMissile) ability).hasMissile();
+	}
 
 	// ability is a missile
 
@@ -131,8 +154,67 @@ boolean pierceUpgraded = false;
 		}
 	}
 
+	final public void render(Graphics g) {
+		
+
+		super.render(g);
+	
+		if (isAlive() && Camera.getZoom() >= Camera.HEALTHBAR_ZOOM_THRESHOLD && getRestockProgress() > 0 ) 
+		{
+			g.setColor(new Color(120, 120, 65));
+			g.fillRect(x, y - 20, image.getWidth() * scale, 7);
+
+			g.setColor(new Color(255, 255, 100));
+			g.fillRect(x, y - 19, getRestockProgress() * image.getWidth() * scale, 5);
+			
+		}
+		
+		
+		if(hasMissile() && Camera.getZoom() >= Camera.HEALTHBAR_ZOOM_THRESHOLD)
+		{
+			g.setLineWidth(1);
+			g.setColor(getColor());
+			g.drawOval(x-w/2, y -  h/2, w*2, h*2);
+			
+//			g.setLineWidth(1);
+//			g.setColor(new Color(255, 150, 100));
+//			g.fillRect(x, y-20, image.getWidth() * scale, 7);
+//			
+//			g.setColor(new Color(255, 255, 100));
+//			g.fillRect(x, y-19, image.getWidth() * scale, 5);
+			
+			//g.fillOval(x-w/2, y-h/2, w*2, h*2);
+			
+//			SpriteSheet sheet2 = getOwner().getImageMissile();
+//			Image image2 = sheet2.getSprite(0, team);
+//			image2.rotate(theta);
+//		
+//			image2.draw(x,  y,  1f, new Color(0, 0, 255));
+			
+			//Images.missiles.getSubImage(x, y)
+		}
+		
+
+		
+	}
+	
+
+	
+	public float getRestockProgress()
+	{
+		if(ability != null && ability instanceof LaunchMissile )
+		{
+			return ((LaunchMissile)ability).getRestockProgress();
+		}
+		else
+		{
+			return 0;
+		}
+	}
+	
 	public void ability(Point p)
 	{
+		
 	}
 	final protected void deathTrigger() { }
 

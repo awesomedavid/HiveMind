@@ -2,8 +2,14 @@ package scenario;
 
 import core.Utility;
 
-public enum Noun {
-	VOID, PULSAR, EXPANSE, ZONE, SECTOR, NEBULA, STAR, ASTEROID_BELT, PIRATES, MOON;
+public enum Noun 
+{
+	VOID, EXPANSE, ZONE, SECTOR, SYSTEM, FIELD, 
+	ASTEROID_BELT, CLUSTER, 
+	MOON,
+	NEBULA,
+	PULSAR, STAR,  
+	PIRATES, COLLECTORS;
 
 	public static Noun getRandom() {
 		return Noun.values()[(Utility.random(Noun.values().length))];
@@ -11,7 +17,7 @@ public enum Noun {
 	
 	public static Noun getBasic()
 	{
-		Noun[] nouns = {Noun.VOID, Noun.ZONE, Noun.SECTOR, Noun.EXPANSE};
+		Noun[] nouns = {Noun.VOID, Noun.ZONE, Noun.SECTOR, Noun.EXPANSE, Noun.SYSTEM, Noun.FIELD};
 		return nouns[Utility.random(nouns.length)];
 	}
 

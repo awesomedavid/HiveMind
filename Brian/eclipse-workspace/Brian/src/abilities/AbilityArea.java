@@ -7,6 +7,7 @@ import org.newdawn.slick.geom.Point;
 import objects.units.Unit;
 
 public abstract class AbilityArea extends Ability {
+	
 	public AbilityArea(Unit owner) {
 		super(owner);
 	}
