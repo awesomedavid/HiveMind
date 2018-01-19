@@ -4,7 +4,6 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
 import core.Utility;
-import objects.units.BaseShip;
 import objects.units.Miner;
 import objects.units.Unit;
 import teams.s2.Flash.Extras.HighYieldMiningAsteroid;
@@ -21,7 +20,6 @@ public class FsMiner extends Miner {
 
 	float timeHigh = 0;
 	float timeNorm = 0;
-	boolean beingHealed;
 
 	/***************** Constructor ***************/
 
@@ -35,20 +33,17 @@ public class FsMiner extends Miner {
 	public void action() {
 
 		// This method is called every frame, BEFORE the order method is called
-		Unit e = nearestEnemyExclude(BaseShip.class);
-		if (e == null) {
-			mine();
+		Unit e = nearestEnemy();
+
+		if (getDistance(e) < 1155) {
+			stopMine();
+			moveTo(getHomeBase());
 		} else {
-			if (getDistance(e) < 1155 && !(e instanceof Miner)) {
-				stopMine();
-				moveTo(getHomeBase());
-			} else if (getDistance(e) < 1155 && e instanceof Miner) {
-			} else {
-				mine();
-			}
-			shoot(e);
+			mine();
 		}
 
+		// if(!isInMiningQueue())
+		shoot(e);
 	}
 
 	/***************** Order Methods ***************/
@@ -203,13 +198,5 @@ public class FsMiner extends Miner {
 
 	public void setInMiningQueue(boolean inMiningQueue) {
 		this.inMiningQueue = inMiningQueue;
-	}
-
-	public boolean isBeingHealed() {
-		return beingHealed;
-	}
-
-	public void setBeingHealed(boolean beingHealed) {
-		this.beingHealed = beingHealed;
 	}
 }

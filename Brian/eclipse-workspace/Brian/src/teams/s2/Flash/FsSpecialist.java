@@ -17,12 +17,10 @@ import objects.units.Unit;
 
 public class FsSpecialist extends Specialist {
 	Flash p;
-	boolean beingHealed;
 
 	public FsSpecialist(Flash p) throws SlickException {
 		super(p);
 		this.p = p;
-
 	}
 
 	/***************** Action Method ***************/
@@ -157,11 +155,4 @@ public class FsSpecialist extends Specialist {
 		// RED.
 	}
 
-	public boolean isBeingHealed() {
-		return beingHealed;
-	}
-
-	public void setBeingHealed(boolean beingHealed) {
-		this.beingHealed = beingHealed;
-	}
 }

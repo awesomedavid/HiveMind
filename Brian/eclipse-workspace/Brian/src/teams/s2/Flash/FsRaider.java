@@ -18,7 +18,6 @@ import objects.units.Unit.Order;
 
 public class FsRaider extends Raider {
 	Flash p;
-	boolean beingHealed;
 
 	public FsRaider(Flash p) throws SlickException {
 		super(p);
@@ -51,7 +50,7 @@ public class FsRaider extends Raider {
 		if (Game.getTime() / 80 < 80) {
 			circle(mvm);
 			shoot(e);
-		} else if (getOwner().countMyRaiders() < 8) {
+		} else if (getOwner().countMyRaiders() < 4) {
 			if (mvs != null) {
 				if (mvm != null && mvm.getDistance(e) < mvs.getDistance(e)) {
 					circle(mvm);
@@ -87,6 +86,7 @@ public class FsRaider extends Raider {
 					circle(nearestAlly(Assault.class));
 					shoot(e);
 				}
+				ability(e);
 			}
 
 			if (e instanceof Raider) {
@@ -105,6 +105,7 @@ public class FsRaider extends Raider {
 					moveTo(e);
 					shoot(e);
 				}
+				ability(e);
 			}
 			if (e instanceof Specialist) {
 				if (e.getDistance(getEnemyBase()) < 500) {
@@ -122,6 +123,7 @@ public class FsRaider extends Raider {
 					moveTo(e);
 					shoot(e);
 				}
+				ability(e);
 			}
 			if (e instanceof Miner) {
 				if (e.getDistance(getEnemyBase()) < 500) {
@@ -139,6 +141,7 @@ public class FsRaider extends Raider {
 					moveTo(e);
 					shoot(e);
 				}
+				ability(e);
 			}
 			if (e instanceof Support) {
 				if (e.getDistance(getEnemyBase()) < 500) {
@@ -156,8 +159,8 @@ public class FsRaider extends Raider {
 					moveTo(e);
 					shoot(e);
 				}
+				ability(e);
 			}
-
 		}
 	}
 
@@ -171,16 +174,38 @@ public class FsRaider extends Raider {
 			angle = 12;
 		}
 
-		if (u != null) {
-			turnTo(u);
-			move((int) getAngleToward(u.getCenterX(), u.getCenterY()) + angle);
-		}
+		turnTo(u);
+		move((int) getAngleToward(u.getCenterX(), u.getCenterY()) + angle);
+
 	}
 
 	/***************** Order Methods ***************/
 
 	protected void attack() {
-		// This method is called every frame while the unit's order is set to ATTACK
+		Unit e = nearestEnemy();
+
+		if (p.countEnemyUnits() - p.countEnemyMiners() > 5) {
+			if (getDistance(e) < 2000 && p.countEnemyMiners() > 0) {
+				if (e instanceof Miner) {
+					moveTo(e);
+				} else {
+					turnTo(e);
+					move((int) getAngleToward(e.getCenterX(), e.getCenterY()) + 120);
+				}
+			} else {
+				if (p.getMostVulerableEnemy(Miner.class) != null) {
+					moveTo(p.getMostVulerableEnemy(Miner.class));
+				} else {
+					moveTo(e);
+				}
+			}
+		} else {
+			if (Game.getTime() > 10000 && getDistance(getEnemyBase()) < 7500 && p.countMyRaiders() > 15) {
+				moveTo(e);
+			} else {
+				moveTo(getHomeBase());
+			}
+		}
 	}
 
 	protected void defend() {
@@ -215,13 +240,5 @@ public class FsRaider extends Raider {
 		// enable
 		// that player's drawings. Press 'q' to enable drawings for BLUE and 'e' for
 		// RED.
-	}
-
-	public boolean isBeingHealed() {
-		return beingHealed;
-	}
-
-	public void setBeingHealed(boolean beingHealed) {
-		this.beingHealed = beingHealed;
 	}
 }

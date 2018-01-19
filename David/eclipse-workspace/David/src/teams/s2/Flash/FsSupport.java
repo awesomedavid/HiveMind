@@ -2,10 +2,12 @@ package teams.s2.Flash;
 
 import java.util.ArrayList;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
 import objects.units.Assault;
+import objects.units.BaseShip;
 import objects.units.Miner;
 import objects.units.Raider;
 import objects.units.Specialist;
@@ -14,43 +16,69 @@ import objects.units.Unit;
 
 public class FsSupport extends Support {
 	Flash p;
-	Unit u = nearestAlly();
-//	Unit s = nearestAlly();
 
-	public Unit getU() {
-		return u;
-	}
+	boolean beingHealed;
 
-	public void setU(Unit u) {
-		this.u = u;
-	}
+	Unit c = null;
+	Unit u;
 
 	public FsSupport(Flash p) throws SlickException {
 		super(p);
 		this.p = p;
+
 	}
 
 	/***************** Action Method ***************/
 
 	public void action() {
 		// This method is called every frame, BEFORE the relevant order method is called
-		ArrayList<Unit> Units = getOwner().getMyUnits();
-		ArrayList<Unit> Supports = getOwner().getMyUnits(Support.class);
+		ArrayList<Unit> Units = getAlliesInRadius(450);
+
+		u = nearestAllyExclude(Support.class);
 		for (int i = 0; i < Units.size(); i++) {
 			if (canHeal(Units.get(i)) && (Units.get(i).getCurHealth() / Units.get(i).getMaxHealth()) < (u.getCurHealth()
 					/ u.getMaxHealth())) {
 				u = Units.get(i);
 			}
 		}
-//		for (int i = 0; i < Supports.size(); i++) {
-//			if (Supports.get(i) instanceof FsSupport) {
-//				
-//			}
-//		}
 
-		moveTo(u.getX(), u.getY());
-		if (u != null && u.isDamaged()) {
+		if (u != null) {
 			shoot(u);
+		}
+
+		Units = p.getMyUnitsExclude(Support.class);
+
+		if (nearestAlly(Specialist.class) != null) {
+			u = nearestAlly(Specialist.class);
+		} else if (nearestAlly(Assault.class) != null) {
+			u = nearestAlly(Assault.class);
+
+		} else if (nearestAlly(Raider.class) != null) {
+			u = nearestAlly(Raider.class);
+
+		} else if (nearestAlly(Support.class) != null) {
+			u = nearestAlly(Support.class);
+
+		} else if (nearestAlly(Miner.class) != null) {
+			u = nearestAlly(Miner.class);
+		} else {
+			u = nearestAlly();
+		}
+
+		for (int i = 0; i < Units.size(); i++) {
+			if (!(Units.get(i) instanceof Miner)
+					&& canHeal(Units.get(i)) && (Units.get(i).getCurHealth()
+							/ Units.get(i).getMaxHealth()) < (u.getCurHealth() / u.getMaxHealth())
+					&& Units.get(i).getAlliesInRadius(1000, Support.class).size() == 0) {
+				u = Units.get(i);
+			}
+		}
+		if (p.getMyBase().getAngleToward(p.getEnemyBase().getX(), p.getEnemyBase().getY()) < 185) {
+			moveTo(u.getCenterX() + 200, u.getCenterY());
+		} else {
+			if (u != null) {
+				moveTo(u.getCenterX() - 200, u.getCenterY());
+			}
 		}
 	}
 
@@ -92,6 +120,23 @@ public class FsSupport extends Support {
 		// enable
 		// that player's drawings. Press 'q' to enable drawings for BLUE and 'e' for
 		// RED.
+
+		Color b = new Color(255, 0, 0);
+
+		g.setColor(b);
+
+		if (u != null) {
+
+			g.drawLine(getX(), getY(), u.getX(), u.getY());
+		}
+	}
+
+	public boolean isBeingHealed() {
+		return beingHealed;
+	}
+
+	public void setBeingHealed(boolean beingHealed) {
+		this.beingHealed = beingHealed;
 	}
 
 }

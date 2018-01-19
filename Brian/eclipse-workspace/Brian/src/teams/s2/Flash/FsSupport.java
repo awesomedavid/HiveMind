@@ -46,7 +46,6 @@ public class FsSupport extends Support {
 			shoot(u);
 		}
 
-		Units = p.getMyUnitsExclude(Support.class);
 
 		if (nearestAlly(Specialist.class) != null) {
 			u = nearestAlly(Specialist.class);
@@ -66,7 +65,7 @@ public class FsSupport extends Support {
 		}
 
 		for (int i = 0; i < Units.size(); i++) {
-			if (!(Units.get(i) instanceof Miner)
+			if (!(Units.get(i) instanceof Miner) && !(Units.get(i) instanceof Support)
 					&& canHeal(Units.get(i)) && (Units.get(i).getCurHealth()
 							/ Units.get(i).getMaxHealth()) < (u.getCurHealth() / u.getMaxHealth())
 					&& Units.get(i).getAlliesInRadius(1000, Support.class).size() == 0) {

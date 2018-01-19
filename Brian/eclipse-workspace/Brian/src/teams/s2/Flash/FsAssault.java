@@ -10,6 +10,7 @@ import core.Utility;
 import objects.units.Assault;
 import objects.units.BaseShip;
 import objects.units.Miner;
+import objects.units.Missile;
 import objects.units.Raider;
 import objects.units.Specialist;
 import objects.units.Support;
@@ -17,8 +18,6 @@ import objects.units.Unit;
 
 public class FsAssault extends Assault {
 	Flash p;
-
-	private boolean beingHealed;
 
 	/***************** Constructor ***************/
 
@@ -48,73 +47,76 @@ public class FsAssault extends Assault {
 			moveTo(mvm);
 			shoot(e);
 		} else {
-			if (e instanceof BaseShip && getHomeBase().getDistance(getEnemyBase()) < 1000) {
-				moveTo(e);
+			if (getOwner().countMyAssaults() < 2) {
+				if (nearestAlly(Specialist.class) != null)
+					circle(nearestAlly(Specialist.class));
+				else if (mvm != null)
+					circle(mvm);
+				else if (nearestAlly(Raider.class) != null)
+					circle(nearestAlly(Raider.class));
+				else
+					moveTo(getHomeBase());
 				shoot(e);
-			}
-			if (e instanceof BaseShip) {
-				circle(mvm);
-				shoot(e);
-			}
-			if (e instanceof Assault) {
-				circle(e);
-				shoot(e);
-			}
-			if (e instanceof Raider) {
-				circle(e);
-				shoot(e);
-			}
-			if (e instanceof Specialist) {
-
-				if (hasDamageReduction()) {
+			} else {
+				if (e instanceof BaseShip && getHomeBase().getDistance(getEnemyBase()) < 1000) {
+					moveTo(e);
+					shoot(e);
+				}
+				if (e instanceof BaseShip) {
+					circle(mvm);
+					shoot(e);
+				}
+				if (e instanceof Assault) {
 					circle(e);
 					shoot(e);
-				} else {
-					if (getDistance(e) < 1055) {
-						ability();
+				}
+				if (e instanceof Raider) {
+					circle(e);
+					shoot(e);
+				}
+				if (e instanceof Specialist) {
+
+					if (hasDamageReduction()) {
+						circle(e);
+						shoot(e);
+					} else {
+						if (getDistance(e) < 1055) {
+							ability();
+						}
+						if (nearestAlly(Specialist.class) != null)
+							circle(nearestAlly(Specialist.class));
+						else if (mvm != null)
+							circle(mvm);
+						else if (nearestAlly(Raider.class) != null)
+							circle(nearestAlly(Raider.class));
+						else
+							moveTo(getHomeBase());
+						shoot(e);
+
 					}
+				}
+				if (e instanceof Miner) {
+					circle(e);
+					shoot(e);
+				}
+
+				if (e instanceof Support) {
 					if (nearestAlly(Specialist.class) != null)
 						circle(nearestAlly(Specialist.class));
-					else if (nearestAlly(Raider.class) != null)
-						circle(nearestAlly(Raider.class));
 					else if (mvm != null)
 						circle(mvm);
+					else if (nearestAlly(Raider.class) != null)
+						circle(nearestAlly(Raider.class));
 					else
 						moveTo(getHomeBase());
 					shoot(e);
 
-					if (getDistance(e) < 1055) {
-						ability();
-
-					}
-				}
-			}
-			if (e instanceof Miner) {
-				circle(e);
-				shoot(e);
-			}
-
-			if (e instanceof Support) {
-				if (e.getDistance(getEnemyBase()) < 500) {
-					if (nearestAlly(Specialist.class) != null) {
-						circle(nearestAlly(Specialist.class));
-						shoot(e);
-					} else if (nearestAlly(Assault.class) != null) {
-						circle(nearestAlly(Assault.class));
-						shoot(e);
-					} else {
-						if (mvm != null) {
-							circle(mvm);
-							shoot(e);
-						}
-					}
-				} else {
-					moveTo(e);
-					shoot(e);
 				}
 			}
 		}
 	}
+
+	
 
 	/***************** Order Methods ***************/
 
@@ -165,21 +167,9 @@ public class FsAssault extends Assault {
 		if (angle < 12) {
 			angle = 12;
 		}
-		if (u != null) {
 
-			turnTo(u);
-			move((int) getAngleToward(u.getCenterX(), u.getCenterY()) + angle);
-		}
+		turnTo(u);
+		move((int) getAngleToward(u.getCenterX(), u.getCenterY()) + angle);
 
 	}
-
-	public boolean isBeingHealed() {
-		return beingHealed;
-	}
-
-	public void setBeingHealed(boolean beingHealed) {
-		this.beingHealed = beingHealed;
-	}
-	
-	
 }

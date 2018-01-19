@@ -39,6 +39,8 @@ import weapons.RaiderAttack;
 public class Flash extends Player {
 	private static MiningManager miningManager;
 
+	private ArrayList<Squadron> squadrons;
+
 	/**************** Constructor ****************/
 
 	public Flash(int team, Game g) throws SlickException {
@@ -47,22 +49,26 @@ public class Flash extends Player {
 		loadImageSet("classic");
 
 		setMiningManager(new MiningManager());
+
+		squadrons = new ArrayList<Squadron>();
+
 	}
 
 	/**************** Action Method ****************/
 
 	public void action() throws SlickException {
-		setMessageOne("NumSup " + countMySupports());
+		setMessageOne("NumSup "+countMySupports());
 		setMessageTwo(";)");
 		if (Game.getTime() == 1) {
 			initializeExtras();
 		}
 		beginResearch(AssaultAegis.class);
-		beginResearch(MinerLaser.class);
-		beginResearch(RaiderPierce.class);
+		beginResearch(MinerLaser.class);				
+		beginResearch(RaiderMissile.class);
 		beginResearch(MinerHull.class);
-		beginResearch(AssaultShield.class);
+		beginResearch(AssaultShield.class);		
 		beginResearch(SpecialistReactor.class);
+		beginResearch(RaiderPierce.class);
 		beginResearch(SupportEnergy.class);
 		beginResearch(RaiderEngine.class);
 		beginResearch(SpecialistKinetic.class);
@@ -71,26 +77,32 @@ public class Flash extends Player {
 		if (countMyMiners() < 2) {
 			addMinerToQueue();
 		}
-		if ((countEnemyMiners() - countNeutralMiners()) > countMyMiners() && countMyMiners() < 15) {
+		if ((countEnemyMiners()-countNeutralMiners()) > countMyMiners()) {
 			addMinerToQueue();
 		}
-		if ((countEnemyRaiders() - countNeutralRaiders()) > countMyAssaults() * 3) {
+		if ((countEnemyRaiders()-countNeutralRaiders()) > countMyAssaults() * 3) {
 			addAssaultToQueue();
-		}
-		if ((countEnemySpecialists() - countNeutralSpecialists()) > countMyRaiders() / 3) {
+		}		
+		if ((countEnemySpecialists()-countNeutralSpecialists()) > countMyRaiders() / 3) {
 			addRaiderToQueue();
-		}
-		if ((countEnemyAssaults() - countNeutralAssaults()) > countMySpecialists()) {
+		}	
+		if ((countEnemyAssaults()-countNeutralAssaults()) > countMySpecialists()) {
 			addSpecialistToQueue();
 		}
-
-		if ((countMyUnits() - countMyMiners()) / 3 > countMySupports() + 1) {
-			addSupportToQueue();
-		} else if (countMyAssaults() < countMyRaiders() / 3) {
-			addAssaultToQueue();
-		} else {
-			addRaiderToQueue();
+		if (getMinerals()> 23) {			
+			if((countMyUnits()-countMyMiners())/3>countMySupports()) {
+				addSupportToQueue();							
+			}else if(countMyAssaults() < countMyRaiders()/3) {
+				addAssaultToQueue();
+			}else {
+				addRaiderToQueue();
+			}
 		}
+		
+//		if (getMyBase().getDistance(getEnemyBase())<1000) {
+//			addAssaultToQueue();
+//		}
+
 	}
 
 	/**************** Draw Method ****************/
@@ -102,39 +114,6 @@ public class Flash extends Player {
 		// that player's drawings. Press 'q' to enable drawings for BLUE and 'e' for
 		// RED.
 	}
-
-	public ArrayList<Unit> getMyUnitsExclude(Class<? extends Unit> clazz) {
-
-		ArrayList<Unit> units = new ArrayList<Unit>();
-
-		if (clazz != Specialist.class && !getMyUnits(Specialist.class).isEmpty()) {
-			for (Unit u : getMyUnits(Specialist.class)) {
-				units.add(u);
-			}
-		}
-		if (clazz != Raider.class && !getMyUnits(Raider.class).isEmpty()) {
-			for (Unit u : getMyUnits(Raider.class)) {
-				units.add(u);
-			}
-		}
-		if (clazz != Assault.class && !getMyUnits(Assault.class).isEmpty()) {
-			for (Unit u : getMyUnits(Assault.class)) {
-				units.add(u);
-			}
-		}
-		if (clazz != Support.class && !getMyUnits(Support.class).isEmpty()) {
-			for (Unit u : getMyUnits(Support.class)) {
-				units.add(u);
-			}
-		}
-		if (clazz != Miner.class && !getMyUnits(Miner.class).isEmpty()) {
-			for (Unit u : getMyUnits(Miner.class)) {
-				units.add(u);
-			}
-		}
-		return units;
-	}
-
 	public ArrayList<Unit> getEnemyUnitsExclude(Class<? extends Unit> clazz) {
 
 		ArrayList<Unit> units = new ArrayList<Unit>();
@@ -165,6 +144,41 @@ public class Flash extends Player {
 			}
 		}
 		return units;
+	}
+	public Unit getMostVulerableEnemy(Class<? extends Unit> clazz) {
+
+		Unit bestUnit = null;
+
+		if (getEnemyUnits().isEmpty() || getEnemyUnitsExclude(Miner.class).isEmpty()) {
+			return null;
+		}
+
+		ArrayList<Unit> units = getEnemyUnitsExclude(Miner.class);
+
+		float totalX = 0;
+		float totalY = 0;
+
+		int averageY = 0;
+		int averageX = 0;
+
+		int maxDistance = 0;
+
+		for (Unit u : units) {
+			totalX += u.getCenterX();
+			totalY += u.getCenterY();
+
+			averageX = (int) (totalX / units.size());
+			averageY = (int) (totalY / units.size());
+		}
+
+		for (Unit u : getEnemyUnits(clazz)) {
+			if (u.getDistance(averageX, averageY) > maxDistance
+					&& (u.countEnemiesInRadius(1200) - u.getEnemiesInRadius(1200, Miner.class).size()) < 2) {
+				maxDistance = (int) u.getDistance(averageX, averageY);
+				bestUnit = u;
+			}
+		}
+		return bestUnit;
 	}
 
 	/*****************
@@ -206,42 +220,6 @@ public class Flash extends Player {
 			}
 		} catch (Exception e) {
 		}
-	}
-
-	public Unit getMostVulerableEnemy(Class<? extends Unit> clazz) {
-
-		Unit bestUnit = null;
-
-		if (getEnemyUnits().isEmpty() || getEnemyUnitsExclude(Miner.class).isEmpty()) {
-			return null;
-		}
-
-		ArrayList<Unit> units = getEnemyUnitsExclude(Miner.class);
-
-		float totalX = 0;
-		float totalY = 0;
-
-		int averageY = 0;
-		int averageX = 0;
-
-		int maxDistance = 0;
-
-		for (Unit u : units) {
-			totalX += u.getCenterX();
-			totalY += u.getCenterY();
-
-			averageX = (int) (totalX / units.size());
-			averageY = (int) (totalY / units.size());
-		}
-
-		for (Unit u : getEnemyUnits(clazz)) {
-			if (u.getDistance(averageX, averageY) > maxDistance
-					&& (u.countEnemiesInRadius(1200) - u.getEnemiesInRadius(1200, Miner.class).size()) < 2) {
-				maxDistance = (int) u.getDistance(averageX, averageY);
-				bestUnit = u;
-			}
-		}
-		return bestUnit;
 	}
 
 	public static MiningManager getMiningManager() {
